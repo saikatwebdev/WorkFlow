@@ -1,5 +1,6 @@
 import React from "react";
 import { Menu, X, Zap } from "lucide-react";
+import ThemeToggle from "./ThemeToggle";
 
 const Navbar = ({ onOpenModal, isMenuOpen, toggleMenu }) => {
   const handleNavClick = (section) => {
@@ -18,7 +19,9 @@ const Navbar = ({ onOpenModal, isMenuOpen, toggleMenu }) => {
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
               <Zap className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900 tracking-tight">Workflow</span>
+            <span className="text-xl font-bold text-gray-900 tracking-tight">
+              Workflow
+            </span>
           </div>
 
           {/* Desktop Menu */}
@@ -35,6 +38,8 @@ const Navbar = ({ onOpenModal, isMenuOpen, toggleMenu }) => {
                   <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-300 group-hover:w-full rounded-full"></span>
                 </a>
               ))}
+              {/* Theme Toggle */}
+              <ThemeToggle isDark={false} toggleTheme={() => {}} />
 
               <button
                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 transform"
@@ -52,7 +57,11 @@ const Navbar = ({ onOpenModal, isMenuOpen, toggleMenu }) => {
               className="text-gray-700 hover:text-blue-600 focus:outline-none p-2 rounded-lg hover:bg-gray-100 transition-all duration-200"
               aria-label="Toggle menu"
             >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>

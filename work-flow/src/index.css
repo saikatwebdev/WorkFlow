@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@Theme {
+    --color-primary: #fff;
+    --color-primary-dark: #000;
+}
+
+
+html {
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}

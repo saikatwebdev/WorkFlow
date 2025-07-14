@@ -73,7 +73,6 @@ const WorkflowLanding = () => {
       <div className="w-full bg-white ">
         <TextHoverEffect text="WorkFlow"  duration={0.5} />
       </div>
-
       <Features />
       <Testimonials />
       <Pricing />

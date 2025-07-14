@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Star } from "lucide-react";
 
 const testimonials = [
@@ -29,54 +29,142 @@ const testimonials = [
     rating: 5,
     avatar: "ER",
   },
+  {
+    name: "David Park",
+    role: "Startup Founder",
+    company: "InnovateLab",
+    content:
+      "The ROI we've seen from Workflow is incredible. Our social media campaigns are now 5x more effective.",
+    rating: 5,
+    avatar: "DP",
+  },
+  {
+    name: "Lisa Wang",
+    role: "Content Creator",
+    company: "Creative Studios",
+    content:
+      "As a content creator, Workflow helps me maintain consistency across all platforms. Game-changer!",
+    rating: 5,
+    avatar: "LW",
+  },
 ];
 
 const Testimonials = () => {
-  return (
-    <section id="testimonials" className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            What Our Customers Say
-          </h2>
-          <p className="text-xl text-gray-600">
-            Join thousands of satisfied customers who've transformed their
-            social media strategy
-          </p>
-        </div>
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={index}
-              className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-8 relative"
-            >
-              <div className="flex items-center mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-5 h-5 text-yellow-400 fill-current"
-                  />
-                ))}
-              </div>
-              <p className="text-gray-700 mb-6 italic">
-                "{testimonial.content}"
-              </p>
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold mr-4">
-                  {testimonial.avatar}
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900">
-                    {testimonial.name}
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    {testimonial.role}, {testimonial.company}
-                  </p>
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
+        setIsAnimating(false);
+      }, 300);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const currentTestimonial = testimonials[currentIndex];
+
+  return (
+    <section className="py-20 bg-white dark:from-gray-900 dark:to-blue-900 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left side - Header */}
+          <div className="space-y-6">
+            <div className="inline-block">
+              <span className="px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium">
+                Customer Stories
+              </span>
+            </div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
+              What Our
+              <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Customers Say
+              </span>
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+              Join thousands of satisfied customers who've transformed their
+              social media strategy with our powerful automation tools.
+            </p>
+            
+            {/* Progress indicators */}
+            <div className="flex space-x-2 mt-8">
+              {testimonials.map((_, index) => (
+                <div
+                  key={index}
+                  className={`h-2 rounded-full transition-all duration-500 ${
+                    index === currentIndex
+                      ? 'w-8 bg-blue-600 dark:bg-blue-400'
+                      : 'w-2 bg-gray-300 dark:bg-gray-600'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Right side - Testimonials */}
+          <div className="relative">
+            <div className="relative h-96 overflow-hidden">
+              <div
+                className={`absolute inset-0 transition-all duration-500 ease-in-out ${
+                  isAnimating 
+                    ? 'transform translate-y-full opacity-0' 
+                    : 'transform translate-y-0 opacity-100'
+                }`}
+              >
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl border border-gray-100 dark:border-gray-700 h-full flex flex-col justify-between relative overflow-hidden">
+                  {/* Background decoration */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full -translate-y-16 translate-x-16"></div>
+                  
+                  {/* Quote icon */}
+                  <div className="absolute top-6 left-6 text-6xl text-blue-200 dark:text-blue-800 font-serif leading-none">
+                    "
+                  </div>
+                  
+                  <div className="relative z-10">
+                    {/* Stars */}
+                    <div className="flex items-center mb-6 mt-8">
+                      {[...Array(currentTestimonial.rating)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className="w-5 h-5 text-yellow-400 fill-current mr-1"
+                        />
+                      ))}
+                    </div>
+
+                    {/* Content */}
+                    <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed mb-8 font-medium">
+                      {currentTestimonial.content}
+                    </p>
+                  </div>
+
+                  {/* Author */}
+                  <div className="flex items-center relative z-10">
+                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4 shadow-lg">
+                      {currentTestimonial.avatar}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900 dark:text-white text-lg">
+                        {currentTestimonial.name}
+                      </h4>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">
+                        {currentTestimonial.role}
+                      </p>
+                      <p className="text-blue-600 dark:text-blue-400 text-sm font-medium">
+                        {currentTestimonial.company}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          ))}
+
+            {/* Floating elements for visual interest */}
+            <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full opacity-20 animate-pulse"></div>
+            <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full opacity-20 animate-pulse delay-1000"></div>
+          </div>
         </div>
       </div>
     </section>
