@@ -9,7 +9,7 @@ import Testimonials from "../components/Testimonials";
 import Pricing from "../components/Pricing";
 import CTA from "../components/CTA";
 import Footer from "../components/Footer";
-
+import TextHoverEffect from "../components/TextHoverEffect";
 const WorkflowLanding = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
@@ -69,7 +69,11 @@ const WorkflowLanding = () => {
         handleSubmit={handleSubmit}
       />
       <HeroSection />
-      <SocialProof />
+      {/* <SocialProof /> */}
+      <div className="w-full bg-white ">
+        <TextHoverEffect text="WorkFlow"  duration={0.5} />
+      </div>
+
       <Features />
       <Testimonials />
       <Pricing />
