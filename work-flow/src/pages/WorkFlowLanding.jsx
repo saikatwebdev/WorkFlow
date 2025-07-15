@@ -10,6 +10,9 @@ import Pricing from "../components/LandingPage/Pricing";
 import CTA from "../components/LandingPage/CTA";
 import Footer from "../components/LandingPage/Footer";
 import TextHoverEffect from "../components/LandingPage/TextHoverEffect";
+import RevealOnScroll from "../components/animations/RevealAnimation";
+
+
 const WorkflowLanding = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
@@ -68,15 +71,29 @@ const WorkflowLanding = () => {
         setErrors={setErrors}
         handleSubmit={handleSubmit}
       />
+
+    <RevealOnScroll>
       <HeroSection />
+    </RevealOnScroll>
+      
       {/* <SocialProof /> */}
       <div className="w-full bg-white ">
         <TextHoverEffect text="WorkFlow"  duration={0.5} />
       </div>
+      <RevealOnScroll delay={0.1}>
       <Features />
+      </RevealOnScroll>
+      <RevealOnScroll delay={0.2}>
       <Testimonials />
+      </RevealOnScroll>
+      <RevealOnScroll delay={0.3}>
       <Pricing />
-      <CTA />
+      </RevealOnScroll>
+      
+      {/* Call to Action Section */}
+      <RevealOnScroll delay={0.4}>
+        <CTA />
+      </RevealOnScroll>
       <Footer />
     </div>
   );
