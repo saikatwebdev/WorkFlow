@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+/* Define your custom theme variables using @theme */
+@theme {
+  --colors-primary: #6D28D9;
+  --colors-primary-light: #8B5CF6;
+  --colors-dark-bg: #111827;
+  --colors-dark-card: #1F2937;
+  --colors-light-bg: #F9FAFB;
+  --colors-light-card: #FFFFFF;
 
-@Theme {
-    --color-primary: #fff;
-    --color-primary-dark: #000;
+  --font-family-sans: "Inter", "sans-serif";
 }
+/* Global styles */
