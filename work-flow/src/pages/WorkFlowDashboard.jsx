@@ -20,7 +20,7 @@ import {
 // Import dashboard section components
 import UserProfile from '../components/DashboardSections/UserProfile';
 import Analytics from '../components/DashboardSections/Analytics';
-import AIFineTuning from '../components/DashboardSections/AIFineTuning';
+import AIFineTuning from '../components/DashboardSections/AIFineTuning/AIFineTuning';
 import Integration from '../components/DashboardSections/Integration/Integration';
 import SalesReport from '../components/DashboardSections/SalesReport';
 
