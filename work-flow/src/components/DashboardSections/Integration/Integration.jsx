@@ -32,6 +32,10 @@ const Integration = () => {
     automations, setAutomations
   } = useIntegrationState();
 
+  // Add edit state
+  const [showEditModal, setShowEditModal] = React.useState(false);
+  const [editingAutomation, setEditingAutomation] = React.useState(null);
+
   // Business logic functions defined inline
   const showNotification = (message, type = 'success') => {
     setToastMessage(message);
@@ -113,6 +117,158 @@ const Integration = () => {
     }
   };
 
+  // New function to handle editing automation
+  const handleEditAutomation = (automationId) => {
+    const automation = automations.find(a => a.id === automationId);
+    if (automation) {
+      setEditingAutomation(automation);
+      
+      // Set the form values based on the automation data
+      const platformId = getPlatformId(automation.platform);
+      const triggerId = getTriggerId(automation.trigger);
+      const actionId = getActionId(automation.action);
+      
+      setSelectedPlatform(platformId);
+      setSelectedTrigger(triggerId);
+      setSelectedAction(actionId);
+      setShowEditModal(true);
+    }
+  };
+
+  // Helper functions to get IDs from names
+  const getPlatformId = (platformName) => {
+    const platforms = {
+      'Instagram': 'instagram',
+      'WhatsApp': 'whatsapp',
+      'Facebook': 'facebook'
+    };
+    return platforms[platformName] || 'instagram';
+  };
+
+  const getTriggerId = (triggerName) => {
+    const triggers = {
+      'New Follower': 'new_follower',
+      'Comment Received': 'comment_received',
+      'Story View': 'story_view',
+      'DM Received': 'dm_received',
+      'Message Received': 'message_received',
+      'Keyword Detected': 'keyword_detected',
+      'Contact Added': 'contact_added',
+      'Page Message': 'page_message',
+      'Post Comment': 'post_comment',
+      'Page Like': 'page_like'
+    };
+    return triggers[triggerName] || 'new_follower';
+  };
+
+  const getActionId = (actionName) => {
+    const actions = {
+      'Send DM': 'send_dm',
+      'Auto Reply': 'auto_reply',
+      'Add Tag': 'add_tag',
+      'Add to List': 'add_to_list',
+      'Send Notification': 'send_notification'
+    };
+    return actions[actionName] || 'send_dm';
+  };
+
+  // New function to handle automation creation
+  const createAutomation = () => {
+    if (!selectedPlatform || !selectedTrigger || !selectedAction) {
+      showNotification('Please fill in all required fields', 'error');
+      return;
+    }
+
+    // Helper function to get platform info
+    const getPlatformInfo = (platformId) => {
+      const platforms = {
+        instagram: { name: 'Instagram', color: 'from-purple-500 to-pink-500' },
+        whatsapp: { name: 'WhatsApp', color: 'from-green-500 to-green-600' },
+        facebook: { name: 'Facebook', color: 'from-blue-500 to-blue-600' }
+      };
+      return platforms[platformId] || { name: platformId, color: 'from-gray-500 to-gray-600' };
+    };
+
+    // Helper function to get trigger name
+    const getTriggerName = (platformId, triggerId) => {
+      const triggers = {
+        instagram: {
+          'new_follower': 'New Follower',
+          'comment_received': 'Comment Received',
+          'story_view': 'Story View',
+          'dm_received': 'DM Received'
+        },
+        whatsapp: {
+          'message_received': 'Message Received',
+          'keyword_detected': 'Keyword Detected',
+          'contact_added': 'Contact Added'
+        },
+        facebook: {
+          'page_message': 'Page Message',
+          'post_comment': 'Post Comment',
+          'page_like': 'Page Like'
+        }
+      };
+      return triggers[platformId]?.[triggerId] || triggerId;
+    };
+
+    // Helper function to get action name
+    const getActionName = (actionId) => {
+      const actions = {
+        'send_dm': 'Send DM',
+        'auto_reply': 'Auto Reply',
+        'add_tag': 'Add Tag',
+        'add_to_list': 'Add to List',
+        'send_notification': 'Send Notification'
+      };
+      return actions[actionId] || actionId;
+    };
+
+    const platformInfo = getPlatformInfo(selectedPlatform);
+    const triggerName = getTriggerName(selectedPlatform, selectedTrigger);
+    const actionName = getActionName(selectedAction);
+
+    if (editingAutomation) {
+      // Update existing automation
+      const updatedAutomation = {
+        ...editingAutomation,
+        name: `${triggerName} → ${actionName}`,
+        platform: platformInfo.name,
+        trigger: triggerName,
+        action: actionName
+      };
+
+      setAutomations(prev => prev.map(automation => 
+        automation.id === editingAutomation.id ? updatedAutomation : automation
+      ));
+      showNotification('Automation updated successfully!');
+      setShowEditModal(false);
+      setEditingAutomation(null);
+    } else {
+      // Create new automation
+      const newAutomation = {
+        id: Date.now(),
+        name: `${triggerName} → ${actionName}`,
+        platform: platformInfo.name,
+        trigger: triggerName,
+        action: actionName,
+        status: 'active',
+        created: new Date().toISOString().split('T')[0],
+        lastRun: 'Never',
+        runs: 0
+      };
+
+      setAutomations(prev => [...prev, newAutomation]);
+      showNotification('Automation created successfully!');
+      setShowCreateModal(false);
+    }
+    
+    // Reset form
+    setSelectedPlatform('');
+    setSelectedTrigger('');
+    setSelectedAction('');
+  };
+
   // Filter automations based on search term and status
   const filteredAutomations = automations.filter(automation => {
     const matchesSearch = automation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -122,8 +278,10 @@ const Integration = () => {
     return matchesSearch && matchesStatus;
   });
 
-  // Original CreateAutomationModal component (unchanged)
-  const CreateAutomationModal = () => {
+  // Updated CreateAutomationModal component that handles both create and edit
+  const CreateAutomationModal = ({ isEdit = false }) => {
+    const isVisible = isEdit ? showEditModal : showCreateModal;
+    
     const platforms = [
       { id: 'instagram', name: 'Instagram', icon: 'Instagram', color: 'bg-gradient-to-r from-purple-500 to-pink-500' },
       { id: 'whatsapp', name: 'WhatsApp', icon: 'MessageCircle', color: 'bg-green-500' },
@@ -157,14 +315,33 @@ const Integration = () => {
       { id: 'send_notification', name: 'Send Notification', description: 'Send notification to team', icon: 'Bell' }
     ];
 
+    const handleClose = () => {
+      if (isEdit) {
+        setShowEditModal(false);
+        setEditingAutomation(null);
+      } else {
+        setShowCreateModal(false);
+      }
+      // Reset form
+      setSelectedPlatform('');
+      setSelectedTrigger('');
+      setSelectedAction('');
+    };
+
     return (
-      <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className={`fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50 transition-all duration-300 ${
+        isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      }`}>
+        <div className={`bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto transform transition-all duration-300 ${
+          isVisible ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'
+        }`}>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Create New Automation</h2>
+            <h2 className="text-xl font-bold text-gray-900">
+              {isEdit ? 'Edit Automation' : 'Create New Automation'}
+            </h2>
             <button 
-              onClick={() => setShowCreateModal(false)}
-              className="text-gray-400 hover:text-gray-600"
+              onClick={handleClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
             >
               <span className="sr-only">Close</span>
               ×
@@ -287,16 +464,17 @@ const Integration = () => {
             {/* Action Buttons */}
             <div className="flex items-center justify-end space-x-3 pt-4 border-t">
               <button
-                onClick={() => setShowCreateModal(false)}
+                onClick={handleClose}
                 className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
               >
                 Cancel
               </button>
               <button
+                onClick={createAutomation}
                 disabled={!selectedPlatform || !selectedTrigger || !selectedAction}
                 className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                Create Automation
+                {isEdit ? 'Update Automation' : 'Create Automation'}
               </button>
             </div>
           </div>
@@ -419,6 +597,7 @@ const Integration = () => {
                     toggleAutomationStatus={toggleAutomationStatus}
                     copyAutomation={copyAutomation}
                     handleDeleteAutomation={handleDeleteAutomation}
+                    handleEditAutomation={handleEditAutomation}
                   />
                 </div>
               ))}
@@ -436,7 +615,10 @@ const Integration = () => {
         )}
 
         {/* Create Automation Modal */}
-        {showCreateModal && <CreateAutomationModal />}
+        {showCreateModal && <CreateAutomationModal isEdit={false} />}
+
+        {/* Edit Automation Modal */}
+        {showEditModal && <CreateAutomationModal isEdit={true} />}
 
         {/* Connect Account Modal */}
         <ConnectAccountModal 

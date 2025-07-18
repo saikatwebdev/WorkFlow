@@ -1,14 +1,4 @@
 @import "tailwindcss";
 
-/* Define your custom theme variables using @theme */
-@theme {
-  --colors-primary: #6D28D9;
-  --colors-primary-light: #8B5CF6;
-  --colors-dark-bg: #111827;
-  --colors-dark-card: #1F2937;
-  --colors-light-bg: #F9FAFB;
-  --colors-light-card: #FFFFFF;
 
-  --font-family-sans: "Inter", "sans-serif";
-}
 /* Global styles */

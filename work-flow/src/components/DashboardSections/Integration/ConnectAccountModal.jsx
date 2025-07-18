@@ -11,7 +11,7 @@ const ConnectAccountModal = ({ showConnectModal, setShowConnectModal, connectAcc
   if (!showConnectModal) return null;
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center  z-50">
       <div className="bg-white rounded-xl p-6 w-full max-w-md transform transition-all duration-300 scale-100">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-gray-900">Connect Account</h2>

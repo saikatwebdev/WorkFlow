@@ -265,10 +265,10 @@ const UserProfile = () => {
     };
 
     // Start animations with staggered delays
-    setTimeout(() => animateValue(0, metrics.totalMessages, 2000, 'totalMessages'), 200);
-    setTimeout(() => animateValue(0, metrics.activeAutomations, 1500, 'activeAutomations'), 400);
-    setTimeout(() => animateValue(0, metrics.leadsGenerated, 1800, 'leadsGenerated'), 600);
-    setTimeout(() => animateValue(0, metrics.engagementRate, 2200, 'engagementRate'), 800);
+    setTimeout(() => animateValue(0, metrics.totalMessages, 200, 'totalMessages'), 20);
+    setTimeout(() => animateValue(0, metrics.activeAutomations, 200, 'activeAutomations'), 20);
+    setTimeout(() => animateValue(0, metrics.leadsGenerated, 200, 'leadsGenerated'), 40);
+    setTimeout(() => animateValue(0, metrics.engagementRate, 200, 'engagementRate'), 60);
   }, []);
 
   const showNotification = (message) => {
