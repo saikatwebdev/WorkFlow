@@ -94,12 +94,12 @@ const UserProfile = () => {
     const maxValue = Math.max(...data.map(d => d.rate));
     
     return (
-      <div className="flex items-end justify-between h-32 space-x-2">
+      <div className="flex items-end justify-between h-32 space-x-2" style={{ height: '250px' }}>
         {data.map((item, index) => (
           <div key={index} className="flex flex-col items-center space-y-2 flex-1">
             <div 
               className="w-full bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-sm transition-all duration-300 hover:from-blue-600 hover:to-blue-500"
-              style={{ height: `${(item.rate / maxValue) * 100}%` }}
+              style={{ height: `${(item.rate / maxValue) * 100}px` }}
             ></div>
             <span className="text-xs text-gray-500 font-medium">{item.day}</span>
           </div>
