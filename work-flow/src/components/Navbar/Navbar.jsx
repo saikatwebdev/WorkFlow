@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { Search, Bell } from 'lucide-react';
-import UserDropdown from '../UserDropdown';
+import React, { useState } from "react";
+import { Search, Bell } from "lucide-react";
+import UserDropdown from "../UserDropdown/UserDropdown";
+import { Menu } from "lucide-react";
 
 const Navbar = ({ onSearch }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -16,6 +17,12 @@ const Navbar = ({ onSearch }) => {
     <header className="bg-white shadow-sm sticky top-0 z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
           {/* Left side - Search */}
           <div className="flex-1 flex items-center">
             <form onSubmit={handleSearch} className="w-full max-w-lg">

@@ -85,9 +85,8 @@ const WorkFlowLanding = () => {
       <RevealOnScroll delay={0.3}>
         <Pricing />
       </RevealOnScroll>
-      <RevealOnScroll delay={0.4}>
         <CTA />
-      </RevealOnScroll>
+  
       <Footer />
     </div>
   );

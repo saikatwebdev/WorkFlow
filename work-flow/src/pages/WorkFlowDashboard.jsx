@@ -1,20 +1,14 @@
 import React, { useState } from 'react';
 import { 
-  Search, 
-  Moon, 
-  Calendar, 
-  Bell, 
-  Mail, 
   Settings, 
   FileText, 
   Share2,
-  ChevronDown,
-  Menu,
   X,
   LogOut,
   BarChart3,
   Users,
-  Activity
+  Activity,
+  Menu // Added Menu icon for toggle button
 } from 'lucide-react';
 
 // Import dashboard section components
@@ -23,6 +17,7 @@ import Analytics from '../components/DashboardSections/Analytics';
 import AIFineTuning from '../components/DashboardSections/AIFineTuning/AIFineTuning';
 import Integration from '../components/DashboardSections/Integration/Integration';
 import SalesReport from '../components/DashboardSections/SalesReport';
+import Navbar from '../components/Navbar/Navbar';
 
 const WorkFlowDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -58,8 +53,6 @@ const WorkFlowDashboard = () => {
         return <UserProfile />;
     }
   };
-
-
 
   const Sidebar = () => (
     <>
@@ -137,51 +130,16 @@ const WorkFlowDashboard = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
+        {/* Mobile Toggle Button - Fixed position at top left */}
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="lg:hidden fixed top-4 left-4 z-40 p-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
+        >
+          <Menu className="w-5 h-5 text-gray-600" />
+        </button>
+
         {/* Header */}
-        <header className="bg-white shadow-sm px-4 lg:px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <button 
-                onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg"
-              >
-                <Menu className="w-5 h-5" />
-              </button>
-              
-              <div className="relative">
-                <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
-                <input
-                  type="text"
-                  placeholder="Type to search..."
-                  className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-48 sm:w-64 transition-all duration-200"
-                />
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <button className="hidden sm:block text-gray-500 hover:text-gray-700 transition-colors">
-                <Moon className="w-5 h-5" />
-              </button>
-              <Calendar className="w-5 h-5 text-gray-400 hidden sm:block" />
-              <div className="relative">
-                <Bell className="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-600 transition-colors" />
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-              </div>
-              <Mail className="w-5 h-5 text-gray-400 hidden sm:block" />
-              
-              <div className="flex items-center space-x-3">
-                <div className="hidden sm:block text-right">
-                  <div className="text-sm font-medium text-gray-900">Thomas Anree</div>
-                  <div className="text-xs text-gray-500">UX Designer</div>
-                </div>
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-                  <span className="text-white text-sm font-medium">T</span>
-                </div>
-                <ChevronDown className="w-4 h-4 text-gray-400 hidden sm:block" />
-              </div>
-            </div>
-          </div>
-        </header>
+        <Navbar onSearch={(query) => console.log('Search:', query)} />
 
         {/* Main Content */}
         <main className="flex-1 p-2 lg:p-2 overflow-y-auto">
