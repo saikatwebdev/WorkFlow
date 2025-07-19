@@ -7,8 +7,7 @@ import {
   LogOut,
   BarChart3,
   Users,
-  Activity,
-  Menu // Added Menu icon for toggle button
+  Activity
 } from 'lucide-react';
 
 // Import dashboard section components
@@ -130,16 +129,11 @@ const WorkFlowDashboard = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile Toggle Button - Fixed position at top left */}
-        <button
-          onClick={() => setSidebarOpen(true)}
-          className="lg:hidden fixed top-4 left-4 z-40 p-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
-        >
-          <Menu className="w-5 h-5 text-gray-600" />
-        </button>
-
         {/* Header */}
-        <Navbar onSearch={(query) => console.log('Search:', query)} />
+        <Navbar 
+          onSearch={(query) => console.log('Search:', query)} 
+          onToggleSidebar={() => setSidebarOpen(true)}
+        />
 
         {/* Main Content */}
         <main className="flex-1 p-2 lg:p-2 overflow-y-auto">
