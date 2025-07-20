@@ -4,6 +4,7 @@ import {
   FileText, 
   Share2,
   X,
+ MessagesSquare,
   LogOut,
   BarChart3,
   Users,
@@ -17,6 +18,7 @@ import AIFineTuning from '../components/DashboardSections/AIFineTuning/AIFineTun
 import Integration from '../components/DashboardSections/Integration/Integration';
 import SalesReport from '../components/DashboardSections/SalesReport';
 import Navbar from '../components/Navbar/Navbar';
+import WhatsappChat from '../components/DashboardSections/Chats/WhatsappChat'
 
 const WorkFlowDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -29,7 +31,9 @@ const WorkFlowDashboard = () => {
     { icon: BarChart3, label: 'Analytics' },
     { icon: Settings, label: 'AI Fine-Tuning' },
     { icon: Share2, label: 'Integration' },
+    { icon: MessagesSquare, label: 'Chats'},
     { icon: FileText, label: 'Sales & Reports' },
+    
   ];
 
   const handleSectionClick = (sectionName) => {
@@ -49,6 +53,8 @@ const WorkFlowDashboard = () => {
         return <Integration />;
       case 'Sales & Reports':
         return <SalesReport />;
+      case 'Chats':
+        return <WhatsappChat/>;
       default:
         return <UserProfile />;
     }
