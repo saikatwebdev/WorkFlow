@@ -12,7 +12,7 @@ import {
 
 // Import dashboard section components
 import UserProfile from '../components/DashboardSections/UserProfile';
-import Analytics from '../components/DashboardSections/Analytics';
+import Analytics from '../components/DashboardSections/Analytics/AnalyticsDashboard/Analytics';
 import AIFineTuning from '../components/DashboardSections/AIFineTuning/AIFineTuning';
 import Integration from '../components/DashboardSections/Integration/Integration';
 import SalesReport from '../components/DashboardSections/SalesReport';
@@ -20,7 +20,9 @@ import Navbar from '../components/Navbar/Navbar';
 
 const WorkFlowDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  // State to manage the active section in the dashboard
   const [activeSection, setActiveSection] = useState('User Profile');
+  
 
   const menuItems = [
     { icon: Users, label: 'User Profile' },
@@ -34,7 +36,6 @@ const WorkFlowDashboard = () => {
     setActiveSection(sectionName);
     setSidebarOpen(false); // Close sidebar on mobile after selection
   };
-
   // Function to render the active section component
   const renderActiveSection = () => {
     switch (activeSection) {
@@ -130,10 +131,7 @@ const WorkFlowDashboard = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <Navbar 
-          onSearch={(query) => console.log('Search:', query)} 
-          onToggleSidebar={() => setSidebarOpen(true)}
-        />
+        <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
         {/* Main Content */}
         <main className="flex-1 p-2 lg:p-2 overflow-y-auto">

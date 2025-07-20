@@ -3,7 +3,7 @@ import { Search, Bell } from "lucide-react";
 import UserDropdown from "../UserDropdown/UserDropdown";
 import { Menu } from "lucide-react";
 
-const Navbar = ({ onSearch }) => {
+const Navbar = ({ onSearch, onToggleSidebar }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (e) => {
@@ -18,8 +18,8 @@ const Navbar = ({ onSearch }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <button
-            onClick={() => setSidebarOpen(true)}
-            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg"
+            onClick={onToggleSidebar}
+            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg "
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -45,7 +45,7 @@ const Navbar = ({ onSearch }) => {
           <div className="flex items-center space-x-4">
             <button
               type="button"
-              className="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="p-1 rounded-full text-gray-400 hover:text-gray-500"
             >
               <span className="sr-only">View notifications</span>
               <div className="relative">
