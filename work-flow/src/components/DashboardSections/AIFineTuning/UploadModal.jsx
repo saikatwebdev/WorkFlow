@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Upload, Link, FileText, HelpCircle, Plus, Trash2 } from 'lucide-react';
 
 const UploadModal = ({ sourceType, isOpen, onClose, onSubmit }) => {
@@ -9,7 +9,31 @@ const UploadModal = ({ sourceType, isOpen, onClose, onSubmit }) => {
     qaItems: [{ question: '', answer: '' }]
   });
 
-  if (!isOpen) return null;
+  const [isVisible, setIsVisible] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsVisible(true);
+      setTimeout(() => setIsAnimating(true), 10);
+    } else {
+      setIsAnimating(false);
+      setTimeout(() => setIsVisible(false), 200);
+    }
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setIsAnimating(false);
+    setTimeout(onClose, 200);
+  };
+
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      handleClose();
+    }
+  };
+
+  if (!isVisible) return null;
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
@@ -56,7 +80,7 @@ const UploadModal = ({ sourceType, isOpen, onClose, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(sourceType, formData);
-    onClose();
+    handleClose();
   };
 
   const getModalConfig = () => {
@@ -107,7 +131,7 @@ const UploadModal = ({ sourceType, isOpen, onClose, onSubmit }) => {
       case 'file':
         return (
           <div className="space-y-4">
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+            <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
               <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <input
                 type="file"
@@ -149,7 +173,7 @@ const UploadModal = ({ sourceType, isOpen, onClose, onSubmit }) => {
                   value={url}
                   onChange={(e) => handleUrlChange(index, e.target.value)}
                   placeholder="https://example.com"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
                 {formData.urls.length > 1 && (
                   <button
@@ -181,7 +205,7 @@ const UploadModal = ({ sourceType, isOpen, onClose, onSubmit }) => {
               onChange={(e) => handleTextChange(e.target.value)}
               placeholder="Enter your text content here..."
               rows={8}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
             />
             <div className="text-sm text-gray-500">
               {formData.text.length} characters
@@ -211,14 +235,14 @@ const UploadModal = ({ sourceType, isOpen, onClose, onSubmit }) => {
                   value={item.question}
                   onChange={(e) => handleQAChange(index, 'question', e.target.value)}
                   placeholder="Enter question..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
                 <textarea
                   value={item.answer}
                   onChange={(e) => handleQAChange(index, 'answer', e.target.value)}
                   placeholder="Enter answer..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
                 />
               </div>
             ))}
@@ -239,8 +263,22 @@ const UploadModal = ({ sourceType, isOpen, onClose, onSubmit }) => {
   };
 
   return (
-    <div className="fixed inset-0 backdrop-filter backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+    <div 
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-200 ease-out ${
+        isAnimating 
+          ? ' bg-opacity-50 backdrop-blur-sm' 
+          : 'bg-opacity-0 backdrop-blur-sm'
+      }`}
+      onClick={handleBackdropClick}
+    >
+      <div className={`
+        bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden
+        transform transition-all duration-200 ease-out
+        ${isAnimating 
+          ? 'scale-100 translate-y-0 opacity-100 rotate-0' 
+          : 'scale-95 translate-y-8 opacity-0 rotate-1'
+        }
+      `}>
         {/* Header */}
         <div className={`${config.bgColor} px-6 py-4 border-b border-gray-200`}>
           <div className="flex items-center justify-between">
@@ -251,7 +289,7 @@ const UploadModal = ({ sourceType, isOpen, onClose, onSubmit }) => {
               <h2 className="text-xl font-semibold text-gray-900">{config.title}</h2>
             </div>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-colors"
             >
               <X className="w-5 h-5 text-gray-500" />
@@ -269,7 +307,7 @@ const UploadModal = ({ sourceType, isOpen, onClose, onSubmit }) => {
           <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
             >
               Cancel
