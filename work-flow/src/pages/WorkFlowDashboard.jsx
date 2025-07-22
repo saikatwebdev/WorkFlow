@@ -20,9 +20,11 @@ import Integration from '../components/DashboardSections/Integration/Integration
 import SalesReport from '../components/DashboardSections/SalesReport';
 import Navbar from '../components/Navbar/Navbar';
 import WhatsappChat from '../components/DashboardSections/Chats/WhatsappChat';
+import SignOutModal from '../components/SignOutModal';
 
 const WorkFlowDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -47,10 +49,21 @@ const WorkFlowDashboard = () => {
     setSidebarOpen(false); // Close sidebar on mobile after selection
   };
 
-  const handleSignOut = () => {
-    // Add your sign out logic here
+  const handleSignOutClick = () => {
+    setShowSignOutModal(true);
+  };
+
+  const handleConfirmSignOut = () => {
+    // Add any cleanup logic here (clear tokens, etc.)
+    setShowSignOutModal(false);
     navigate('/');
   };
+
+  const handleCancelSignOut = () => {
+    setShowSignOutModal(false);
+  };
+
+
 
   const Sidebar = () => (
     <>
@@ -112,7 +125,7 @@ const WorkFlowDashboard = () => {
         {/* Sign out */}
         <div className="p-4 lg:p-3 border-t border-gray-200">
           <div 
-            onClick={handleSignOut}
+            onClick={handleSignOutClick}
             className="flex items-center space-x-3 lg:space-x-0 lg:justify-center p-3 rounded-lg cursor-pointer text-red-600 hover:bg-red-50 transition-all duration-200 group"
           >
             <LogOut className="w-5 h-5 flex-shrink-0" />
@@ -152,6 +165,13 @@ const WorkFlowDashboard = () => {
           </Routes>
         </main>
       </div>
+
+      {/* Sign Out Modal */}
+      <SignOutModal 
+        isOpen={showSignOutModal}
+        onConfirm={handleConfirmSignOut}
+        onCancel={handleCancelSignOut}
+      />
     </div>
   );
 };
