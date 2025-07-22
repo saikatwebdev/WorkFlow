@@ -160,25 +160,29 @@ function WhatsappChat() {
   };
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-[calc(100vh-4rem)] bg-white overflow-hidden">
       {/* Sidebar */}
       <div className="w-80 border-r border-gray-200 flex flex-col h-full">
-        {/* Header with Filters */}
-        <ChatFilter
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-        />
+        {/* Header with Filters - Fixed */}
+        <div className="flex-shrink-0">
+          <ChatFilter
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+          />
+        </div>
 
-        {/* Chat List - Pass updated chats with current status */}
-        <ChatList
-          chats={chats}
-          activeChat={activeChat}
-          onChatSelect={setActiveChat}
-          searchTerm={searchTerm}
-          statusFilter={statusFilter}
-        />
+        {/* Chat List - Scrollable */}
+        <div className="flex-1 overflow-hidden">
+          <ChatList
+            chats={chats}
+            activeChat={activeChat}
+            onChatSelect={setActiveChat}
+            searchTerm={searchTerm}
+            statusFilter={statusFilter}
+          />
+        </div>
       </div>
 
       {/* Chat Window */}

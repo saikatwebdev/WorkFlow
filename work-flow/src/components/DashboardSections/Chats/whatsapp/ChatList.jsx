@@ -10,10 +10,11 @@ const ChatList = ({ chats, activeChat, onChatSelect, searchTerm, statusFilter })
   });
 
   return (
-    <div className="h-full overflow-y-auto">
+    <div className="h-full overflow-y-auto overflow-x-hidden">
       {filteredChats.length === 0 ? (
         <div className="p-8 text-center text-gray-500">
           <p>No chats found</p>
+          <p className="text-sm mt-2">Try adjusting your search or filter</p>
         </div>
       ) : (
         filteredChats.map(chat => (
