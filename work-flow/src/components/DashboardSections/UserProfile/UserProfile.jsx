@@ -9,13 +9,13 @@ import {
 } from 'lucide-react';
 
 // Import sub-components
-import MetricsGrid from './components/MetricsGrid';
-import EngagementChart from './components/EngagementChart';
-import RecentActivity from './components/RecentActivity';
-import QuickLaunch from './components/QuickLaunch';
-import CustomAutomationModal from './components/CustomAutomationModal';
-import DeleteConfirmationModal from './components/DeleteConfirmationModal';
-import Toast from './components/Toast';
+import MetricsGrid from './MetricsGrid';
+import EngagementChart from './EngagementChart';
+import RecentActivity from './RecentActivity';
+import QuickLaunch from './QuickLaunch';
+import CustomAutomationModal from './CustomAutomationModal';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
+import Toast from './Toast';
 
 // Import data and constants
 import { 
@@ -23,8 +23,8 @@ import {
   recentActivityData, 
   platforms, 
   triggers, 
-  actions 
-} from './data/userProfileData';
+  actions
+} from '../../data/userProfileData';
 
 const UserProfile = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('weekly');
