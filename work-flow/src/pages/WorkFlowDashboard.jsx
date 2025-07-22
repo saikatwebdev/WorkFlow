@@ -17,7 +17,7 @@ import UserProfile from '../components/DashboardSections/UserProfile';
 import Analytics from '../components/DashboardSections/Analytics/AnalyticsDashboard/Analytics';
 import AIFineTuning from '../components/DashboardSections/AIFineTuning/AIFineTuning';
 import Integration from '../components/DashboardSections/Integration/Integration';
-import SalesReport from '../components/DashboardSections/SalesReport';
+import SalesReport from '../components/DashboardSections/SalesReport/SalesReport';
 import Navbar from '../components/Navbar/Navbar';
 import WhatsappChat from '../components/DashboardSections/Chats/WhatsappChat';
 import SignOutModal from '../components/SignOutModal';

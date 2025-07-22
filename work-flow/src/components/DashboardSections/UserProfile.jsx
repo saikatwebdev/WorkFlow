@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Send, 
   Activity, 
@@ -57,6 +58,8 @@ const UserProfile = () => {
   const [customQuickLaunch, setCustomQuickLaunch] = useState([]);
   const [editingAutomation, setEditingAutomation] = useState(null);
   const [deletingAutomation, setDeletingAutomation] = useState(null);
+  const navigate = useNavigate();
+
   const [animatedMetrics, setAnimatedMetrics] = useState({
     totalMessages: 0,
     activeAutomations: 0,
@@ -278,17 +281,20 @@ const UserProfile = () => {
   };
 
   const handleRedirect = (cardType) => {
-    switch (cardType) {
-      case 'messages':
-        showNotification('Redirecting to Chats page...');
-        break;
-      case 'automations':
-        showNotification('Redirecting to Integration page...');
-        break;
-      default:
-        break;
-    }
-  };
+  switch (cardType) {
+    case 'messages':
+      showNotification('Redirecting to Chats page...');
+      navigate('/chats'); // update with your actual route
+      break;
+    case 'automations':
+      showNotification('Redirecting to Integration page...');
+      navigate('/integration'); // update with your actual route
+      break;
+    default:
+      break;
+  }
+};
+
 
   const handleCreateCustom = () => {
     if (!customAutomation.name || !customAutomation.platform || !customAutomation.trigger || !customAutomation.action) {
