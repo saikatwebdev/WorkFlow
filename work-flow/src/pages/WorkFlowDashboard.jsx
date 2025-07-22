@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 
 // Import dashboard section components
-import UserProfile from '../components/DashboardSections/UserProfile';
+import UserProfile from '../components/DashboardSections/UserProfile/UserProfile';
 import Analytics from '../components/DashboardSections/Analytics/AnalyticsDashboard/Analytics';
 import AIFineTuning from '../components/DashboardSections/AIFineTuning/AIFineTuning';
 import Integration from '../components/DashboardSections/Integration/Integration';
