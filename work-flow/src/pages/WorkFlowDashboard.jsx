@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { 
   Settings, 
   FileText, 
   Share2,
   X,
- MessagesSquare,
+  MessagesSquare,
   LogOut,
   BarChart3,
   Users,
@@ -18,46 +19,37 @@ import AIFineTuning from '../components/DashboardSections/AIFineTuning/AIFineTun
 import Integration from '../components/DashboardSections/Integration/Integration';
 import SalesReport from '../components/DashboardSections/SalesReport';
 import Navbar from '../components/Navbar/Navbar';
-import WhatsappChat from '../components/DashboardSections/Chats/WhatsappChat'
+import WhatsappChat from '../components/DashboardSections/Chats/WhatsappChat';
 
 const WorkFlowDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  // State to manage the active section in the dashboard
-  const [activeSection, setActiveSection] = useState('User Profile');
-  
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const menuItems = [
-    { icon: Users, label: 'User Profile' },
-    { icon: BarChart3, label: 'Analytics' },
-    { icon: Settings, label: 'AI Fine-Tuning' },
-    { icon: Share2, label: 'Integration' },
-    { icon: MessagesSquare, label: 'Chats'},
-    { icon: FileText, label: 'Sales & Reports' },
-    
+    { icon: Users, label: 'User Profile', path: 'profile' },
+    { icon: BarChart3, label: 'Analytics', path: 'analytics' },
+    { icon: Settings, label: 'AI Fine-Tuning', path: 'ai-fine-tuning' },
+    { icon: Share2, label: 'Integration', path: 'integration' },
+    { icon: MessagesSquare, label: 'Chats', path: 'chats' },
+    { icon: FileText, label: 'Sales & Reports', path: 'sales-reports' },
   ];
 
-  const handleSectionClick = (sectionName) => {
-    setActiveSection(sectionName);
+  // Get active section from current path
+  const getActiveSection = () => {
+    const currentPath = location.pathname.split('/').pop();
+    const activeItem = menuItems.find(item => item.path === currentPath);
+    return activeItem ? activeItem.label : 'User Profile';
+  };
+
+  const handleSectionClick = (item) => {
+    navigate(`/dashboard/${item.path}`);
     setSidebarOpen(false); // Close sidebar on mobile after selection
   };
-  // Function to render the active section component
-  const renderActiveSection = () => {
-    switch (activeSection) {
-      case 'User Profile':
-        return <UserProfile />;
-      case 'Analytics':
-        return <Analytics />;
-      case 'AI Fine-Tuning':
-        return <AIFineTuning />;
-      case 'Integration':
-        return <Integration />;
-      case 'Sales & Reports':
-        return <SalesReport />;
-      case 'Chats':
-        return <WhatsappChat/>;
-      default:
-        return <UserProfile />;
-    }
+
+  const handleSignOut = () => {
+    // Add your sign out logic here
+    navigate('/');
   };
 
   const Sidebar = () => (
@@ -92,31 +84,37 @@ const WorkFlowDashboard = () => {
 
         {/* Navigation */}
         <nav className="flex-1 px-4 lg:px-3 py-6 space-y-2">
-          {menuItems.map((item, index) => (
-            <div
-              key={index}
-              onClick={() => handleSectionClick(item.label)}
-              className={`flex items-center space-x-3 lg:space-x-0 lg:justify-center p-3 rounded-lg cursor-pointer transition-all duration-200 group ${
-                activeSection === item.label 
-                  ? 'bg-blue-50 text-blue-600 border-r-4 border-blue-600 lg:border-r-0 lg:bg-blue-500 lg:text-white' 
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 lg:hover:bg-blue-50 lg:hover:text-blue-600'
-              }`}
-              style={{ animationDelay: `${index * 0.05}s` }}
-            >
-              <item.icon className="w-5 h-5 flex-shrink-0" />
-              <span className="lg:hidden font-medium">{item.label}</span>
-              
-              {/* Tooltip for desktop */}
-              <div className="hidden lg:group-hover:block absolute left-16 bg-gray-900 text-white px-2 py-1 rounded text-sm whitespace-nowrap z-10">
-                {item.label}
+          {menuItems.map((item, index) => {
+            const isActive = getActiveSection() === item.label;
+            return (
+              <div
+                key={index}
+                onClick={() => handleSectionClick(item)}
+                className={`flex items-center space-x-3 lg:space-x-0 lg:justify-center p-3 rounded-lg cursor-pointer transition-all duration-200 group ${
+                  isActive 
+                    ? 'bg-blue-50 text-blue-600 border-r-4 border-blue-600 lg:border-r-0 lg:bg-blue-500 lg:text-white' 
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 lg:hover:bg-blue-50 lg:hover:text-blue-600'
+                }`}
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                <item.icon className="w-5 h-5 flex-shrink-0" />
+                <span className="lg:hidden font-medium">{item.label}</span>
+                
+                {/* Tooltip for desktop */}
+                <div className="hidden lg:group-hover:block absolute left-16 bg-gray-900 text-white px-2 py-1 rounded text-sm whitespace-nowrap z-10">
+                  {item.label}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </nav>
 
         {/* Sign out */}
         <div className="p-4 lg:p-3 border-t border-gray-200">
-          <div className="flex items-center space-x-3 lg:space-x-0 lg:justify-center p-3 rounded-lg cursor-pointer text-red-600 hover:bg-red-50 transition-all duration-200 group">
+          <div 
+            onClick={handleSignOut}
+            className="flex items-center space-x-3 lg:space-x-0 lg:justify-center p-3 rounded-lg cursor-pointer text-red-600 hover:bg-red-50 transition-all duration-200 group"
+          >
             <LogOut className="w-5 h-5 flex-shrink-0" />
             <span className="lg:hidden font-medium">Sign Out</span>
             
@@ -141,8 +139,17 @@ const WorkFlowDashboard = () => {
 
         {/* Main Content */}
         <main className="flex-1 p-2 lg:p-2 overflow-y-auto">
-          {/* Content Area */}
-          {renderActiveSection()}
+          {/* Content Area with Routes */}
+          <Routes>
+            <Route path="/" element={<Navigate to="/dashboard/profile" replace />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/ai-fine-tuning" element={<AIFineTuning />} />
+            <Route path="/integration" element={<Integration />} />
+            <Route path="/chats" element={<WhatsappChat />} />
+            <Route path="/sales-reports" element={<SalesReport />} />
+            <Route path="*" element={<Navigate to="/dashboard/profile" replace />} />
+          </Routes>
         </main>
       </div>
     </div>
