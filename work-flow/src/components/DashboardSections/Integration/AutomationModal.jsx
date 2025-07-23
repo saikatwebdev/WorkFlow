@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { X, ChevronRight, ChevronLeft, Loader2, Check } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, Loader2, Check, Sparkles } from 'lucide-react';
 import { platforms, triggers, automationLogics } from '../../data/platformData';
+
+// Data for the new steps
+const userCategories = ['Business Owner', 'Marketer', 'Developer', 'Sales Professional', 'Student', 'Other'];
+const userGoals = ['Save Time', 'Generate Leads', 'Improve Customer Support', 'Streamline Operations', 'Personal Use'];
+const industries = ['E-commerce', 'SaaS', 'Real Estate', 'Healthcare', 'Education', 'Finance', 'Marketing Agency'];
 
 const AutomationModal = ({ editingAutomation, connectedAccounts, onClose, onSave }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [automationData, setAutomationData] = useState({
+    // New fields
+    fullName: '',
+    category: '',
+    mainGoal: '',
+    industry: '',
+    useCase: '',
+    bio: '',
+    // Original fields
     name: '',
     platform: '',
     accountId: '',
@@ -18,6 +31,12 @@ const AutomationModal = ({ editingAutomation, connectedAccounts, onClose, onSave
   useEffect(() => {
     if (editingAutomation) {
       setAutomationData({
+        fullName: editingAutomation.fullName || '',
+        category: editingAutomation.category || '',
+        mainGoal: editingAutomation.mainGoal || '',
+        industry: editingAutomation.industry || '',
+        useCase: editingAutomation.useCase || '',
+        bio: editingAutomation.bio || '',
         name: editingAutomation.name || '',
         platform: editingAutomation.platform || '',
         accountId: editingAutomation.accountId || '',
@@ -29,20 +48,32 @@ const AutomationModal = ({ editingAutomation, connectedAccounts, onClose, onSave
     }
   }, [editingAutomation]);
 
-  const totalSteps = 5;
+  const totalSteps = 11; // 6 new steps + 5 original steps
   const progress = (currentStep / totalSteps) * 100;
 
   const platformAccounts = connectedAccounts.filter(
     acc => acc.platform === automationData.platform
   );
+  
+  const getWordCount = (str) => {
+    return str.trim().split(/\s+/).filter(Boolean).length;
+  };
 
   const canProceed = () => {
     switch (currentStep) {
-      case 1: return automationData.platform && automationData.accountId;
-      case 2: return automationData.trigger;
-      case 3: return automationData.logic;
-      case 4: return true;
-      case 5: return automationData.name;
+      // New steps validation
+      case 1: return automationData.fullName.trim() !== '';
+      case 2: return automationData.category !== '';
+      case 3: return automationData.mainGoal !== '';
+      case 4: return automationData.industry !== '';
+      case 5: return getWordCount(automationData.useCase) >= 200;
+      case 6: return automationData.bio.trim() !== '';
+      // Original steps validation (renumbered)
+      case 7: return automationData.platform && automationData.accountId;
+      case 8: return automationData.trigger;
+      case 9: return automationData.logic;
+      case 10: return true;
+      case 11: return automationData.name;
       default: return false;
     }
   };
@@ -70,6 +101,14 @@ const AutomationModal = ({ editingAutomation, connectedAccounts, onClose, onSave
   };
 
   const stepTitles = [
+    // New step titles
+    'Your Name',
+    'Your Category',
+    'Main Goal',
+    'Your Industry',
+    'Primary Use Case',
+    'Your Bio',
+    // Original step titles
     'Choose Platform',
     'Select Trigger',
     'Define Logic',
@@ -79,7 +118,118 @@ const AutomationModal = ({ editingAutomation, connectedAccounts, onClose, onSave
 
   const renderStepContent = () => {
     switch (currentStep) {
+      // --- NEW STEPS ---
       case 1:
+        return (
+          <div className="space-y-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">What's your full name?</h3>
+            <input
+              type="text"
+              value={automationData.fullName}
+              onChange={(e) => setAutomationData({ ...automationData, fullName: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="e.g., Jane Doe"
+            />
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Which category best describes you?</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {userCategories.map(cat => (
+                <label key={cat} className={`block p-4 border rounded-lg cursor-pointer transition-all ${automationData.category === cat ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                  <input type="radio" name="category" value={cat} checked={automationData.category === cat} onChange={(e) => setAutomationData({ ...automationData, category: e.target.value })} className="sr-only" />
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-gray-900">{cat}</span>
+                    {automationData.category === cat && <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center"><Check size={14} className="text-white" /></div>}
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">What's your main goal with this workflow?</h3>
+            <div className="grid grid-cols-1 gap-3">
+              {userGoals.map(goal => (
+                <label key={goal} className={`block p-4 border rounded-lg cursor-pointer transition-all ${automationData.mainGoal === goal ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                  <input type="radio" name="mainGoal" value={goal} checked={automationData.mainGoal === goal} onChange={(e) => setAutomationData({ ...automationData, mainGoal: e.target.value })} className="sr-only" />
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-gray-900">{goal}</span>
+                    {automationData.mainGoal === goal && <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center"><Check size={14} className="text-white" /></div>}
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="space-y-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">What industry are you in?</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {industries.map(industry => (
+                <label key={industry} className={`block p-4 border rounded-lg cursor-pointer transition-all ${automationData.industry === industry ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                  <input type="radio" name="industry" value={industry} checked={automationData.industry === industry} onChange={(e) => setAutomationData({ ...automationData, industry: e.target.value })} className="sr-only" />
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-gray-900">{industry}</span>
+                    {automationData.industry === industry && <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center"><Check size={14} className="text-white" /></div>}
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 5:
+        const wordCount = getWordCount(automationData.useCase);
+        return (
+          <div className="space-y-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">What's your main use case?</h3>
+            <p className="text-sm text-gray-500 mb-4">Please be detailed. The more information you provide, the better we can tailor the automation. (min 200 words)</p>
+            <div className="relative">
+              <textarea
+                value={automationData.useCase}
+                onChange={(e) => setAutomationData({ ...automationData, useCase: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y"
+                rows="8"
+                placeholder="Describe how you plan to use this automation. For example: 'I want to build a customer support workflow for my e-commerce store. When a customer sends a direct message on Instagram with keywords like 'shipping', 'order status', or 'return', I want the automation to trigger. It should first acknowledge the message and then ask for their order number. Once the order number is provided, it should look it up in our Shopify system via an API call and provide the current status. If the query is about a return, it should provide a link to our returns policy page...'."
+              />
+              <div className="absolute bottom-3 right-3 flex items-center gap-4">
+                  <span className={`text-xs font-medium ${wordCount < 200 ? 'text-red-500' : 'text-green-600'}`}>
+                      {wordCount} / 200 words
+                  </span>
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200 transition-colors">
+                      <Sparkles size={14} />
+                      Complete with AI
+                  </button>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 6:
+        return (
+          <div className="space-y-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Describe yourself in 1-2 lines</h3>
+            <input
+              type="text"
+              value={automationData.bio}
+              onChange={(e) => setAutomationData({ ...automationData, bio: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="e.g., I'm a marketing manager for a growing SaaS startup."
+            />
+          </div>
+        );
+      
+      // --- ORIGINAL STEPS (Renumbered) ---
+      case 7:
         return (
           <div className="space-y-6">
             <div>
@@ -150,7 +300,7 @@ const AutomationModal = ({ editingAutomation, connectedAccounts, onClose, onSave
           </div>
         );
 
-      case 2:
+      case 8:
         return (
           <div className="space-y-6">
             <div>
@@ -194,7 +344,7 @@ const AutomationModal = ({ editingAutomation, connectedAccounts, onClose, onSave
           </div>
         );
 
-      case 3:
+      case 9:
         return (
           <div className="space-y-6">
             <div>
@@ -241,7 +391,7 @@ const AutomationModal = ({ editingAutomation, connectedAccounts, onClose, onSave
           </div>
         );
 
-      case 4:
+      case 10:
         return (
           <div className="space-y-6">
             <div>
@@ -329,7 +479,7 @@ const AutomationModal = ({ editingAutomation, connectedAccounts, onClose, onSave
           </div>
         );
 
-      case 5:
+      case 11:
         return (
           <div className="space-y-6">
             <div>
@@ -385,8 +535,8 @@ const AutomationModal = ({ editingAutomation, connectedAccounts, onClose, onSave
   };
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 backdrop-blur-sm backdrop-blur-sm bg-opacity-30 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col">
         {/* Header with Progress */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between mb-4">
@@ -402,7 +552,7 @@ const AutomationModal = ({ editingAutomation, connectedAccounts, onClose, onSave
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <X size={20} />
+              <X size={20} className="text-gray-600" />
             </button>
           </div>
           
@@ -416,7 +566,7 @@ const AutomationModal = ({ editingAutomation, connectedAccounts, onClose, onSave
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-250px)]">
+        <div className="p-6 overflow-y-auto flex-grow">
           {isLoading && currentStep > totalSteps ? (
             <div className="flex flex-col items-center justify-center py-12">
               <Loader2 size={48} className="animate-spin text-blue-600 mb-4" />
@@ -428,12 +578,12 @@ const AutomationModal = ({ editingAutomation, connectedAccounts, onClose, onSave
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-200">
+        <div className="p-6 border-t border-gray-200 bg-gray-50 rounded-b-xl">
           <div className="flex gap-3">
             {currentStep > 1 && (
               <button
                 onClick={handleBack}
-                className="flex items-center gap-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 <ChevronLeft size={16} />
                 Back
