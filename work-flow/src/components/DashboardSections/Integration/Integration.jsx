@@ -1,655 +1,220 @@
-import React from 'react';
-import { Link, Plus, Search, Filter } from 'lucide-react';
-
-// Import components and state hook only
-import { useIntegrationState } from './useIntegrationState';
-import ToastNotification from './ToastNotification';
-import ConnectAccountModal from './ConnectAccountModal';
-import DisconnectModal from './DisconnectModal';
-import DeleteAutomationModal from './DeleteAutomationModal';
-import ConnectedAccountCard from './ConnectedAccountCard';
+import React, { useState } from 'react';
+import { Plus } from 'lucide-react';
+import ConnectionCard from './ConnectionCard';
 import AutomationCard from './AutomationCard';
+import ConnectionModal from './ConnectionModal';
+import AutomationModal from './AutomationModal';
+import { platforms } from '../../data/platformData';
 
-const Integration = () => {
-  const {
-    activeTab, setActiveTab,
-    showCreateModal, setShowCreateModal,
-    showConnectModal, setShowConnectModal,
-    showDisconnectModal, setShowDisconnectModal,
-    selectedPlatform, setSelectedPlatform,
-    selectedTrigger, setSelectedTrigger,
-    selectedAction, setSelectedAction,
-    filterStatus, setFilterStatus,
-    searchTerm, setSearchTerm,
-    disconnectAccount, setDisconnectAccount,
-    showToast, setShowToast,
-    toastMessage, setToastMessage,
-    toastType, setToastType,
-    showDropdown, setShowDropdown,
-    showDeleteModal, setShowDeleteModal,
-    deleteAutomation, setDeleteAutomation,
-    connectedAccounts, setConnectedAccounts,
-    automations, setAutomations
-  } = useIntegrationState();
+const Integration  = () => {
+  const [connectedAccounts, setConnectedAccounts] = useState([]);
+  const [automations, setAutomations] = useState([]);
+  const [showConnectionModal, setShowConnectionModal] = useState(false);
+  const [showAutomationModal, setShowAutomationModal] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState(null);
+  const [editingConnection, setEditingConnection] = useState(null);
+  const [editingAutomation, setEditingAutomation] = useState(null);
 
-  // Add edit state
-  const [showEditModal, setShowEditModal] = React.useState(false);
-  const [editingAutomation, setEditingAutomation] = React.useState(null);
-
-  // Business logic functions defined inline
-  const showNotification = (message, type = 'success') => {
-    setToastMessage(message);
-    setToastType(type);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+  const handleAddConnection = (platform) => {
+    setSelectedPlatform(platform);
+    setEditingConnection(null);
+    setShowConnectionModal(true);
   };
 
-  const connectAccount = (account) => {
-    if (account) {
-      const newAccount = {
-        id: Date.now(),
-        platform: account.platform,
-        username: account.username,
-        connected: true,
-        avatar: account.avatar
-      };
-      setConnectedAccounts(prev => [...prev, newAccount]);
-      showNotification(`Successfully connected ${account.platform} account!`);
-      setShowConnectModal(false);
-    }
+  const handleEditConnection = (connection) => {
+    setEditingConnection(connection);
+    setSelectedPlatform(connection.platform);
+    setShowConnectionModal(true);
   };
 
-  const handleDisconnect = (accountId) => {
-    const account = connectedAccounts.find(acc => acc.id === accountId);
-    setDisconnectAccount(account);
-    setShowDisconnectModal(true);
+  const handleDisconnect = (connectionId) => {
+    setConnectedAccounts(prev => prev.filter(acc => acc.id !== connectionId));
   };
 
-  const confirmDisconnect = () => {
-    if (disconnectAccount) {
-      setConnectedAccounts(prev => prev.filter(acc => acc.id !== disconnectAccount.id));
-      showNotification(`${disconnectAccount.platform} account disconnected`, 'info');
-      setShowDisconnectModal(false);
-      setDisconnectAccount(null);
-    }
-  };
-
-  const toggleAutomationStatus = (automationId) => {
-    setAutomations(prev => prev.map(automation => {
-      if (automation.id === automationId) {
-        const newStatus = automation.status === 'active' ? 'paused' : 'active';
-        showNotification(`Automation ${newStatus}`, 'info');
-        return { ...automation, status: newStatus };
-      }
-      return automation;
-    }));
-  };
-
-  const copyAutomation = (automationId) => {
-    const automation = automations.find(a => a.id === automationId);
-    if (automation) {
-      const newAutomation = {
-        ...automation,
-        id: Date.now(),
-        name: `${automation.name} (Copy)`,
-        status: 'draft',
-        created: new Date().toISOString().split('T')[0],
-        lastRun: 'Never',
-        runs: 0
-      };
-      setAutomations(prev => [...prev, newAutomation]);
-      showNotification('Automation copied successfully!');
-    }
-  };
-
-  const handleDeleteAutomation = (automationId) => {
-    const automation = automations.find(a => a.id === automationId);
-    setDeleteAutomation(automation);
-    setShowDeleteModal(true);
-  };
-
-  const confirmDelete = () => {
-    if (deleteAutomation) {
-      setAutomations(prev => prev.filter(a => a.id !== deleteAutomation.id));
-      showNotification('Automation deleted successfully!', 'info');
-      setShowDeleteModal(false);
-      setDeleteAutomation(null);
-    }
-  };
-
-  // New function to handle editing automation
-  const handleEditAutomation = (automationId) => {
-    const automation = automations.find(a => a.id === automationId);
-    if (automation) {
-      setEditingAutomation(automation);
-      
-      // Set the form values based on the automation data
-      const platformId = getPlatformId(automation.platform);
-      const triggerId = getTriggerId(automation.trigger);
-      const actionId = getActionId(automation.action);
-      
-      setSelectedPlatform(platformId);
-      setSelectedTrigger(triggerId);
-      setSelectedAction(actionId);
-      setShowEditModal(true);
-    }
-  };
-
-  // Helper functions to get IDs from names
-  const getPlatformId = (platformName) => {
-    const platforms = {
-      'Instagram': 'instagram',
-      'WhatsApp': 'whatsapp',
-      'Facebook': 'facebook'
-    };
-    return platforms[platformName] || 'instagram';
-  };
-
-  const getTriggerId = (triggerName) => {
-    const triggers = {
-      'New Follower': 'new_follower',
-      'Comment Received': 'comment_received',
-      'Story View': 'story_view',
-      'DM Received': 'dm_received',
-      'Message Received': 'message_received',
-      'Keyword Detected': 'keyword_detected',
-      'Contact Added': 'contact_added',
-      'Page Message': 'page_message',
-      'Post Comment': 'post_comment',
-      'Page Like': 'page_like'
-    };
-    return triggers[triggerName] || 'new_follower';
-  };
-
-  const getActionId = (actionName) => {
-    const actions = {
-      'Send DM': 'send_dm',
-      'Auto Reply': 'auto_reply',
-      'Add Tag': 'add_tag',
-      'Add to List': 'add_to_list',
-      'Send Notification': 'send_notification'
-    };
-    return actions[actionName] || 'send_dm';
-  };
-
-  // New function to handle automation creation
-  const createAutomation = () => {
-    if (!selectedPlatform || !selectedTrigger || !selectedAction) {
-      showNotification('Please fill in all required fields', 'error');
-      return;
-    }
-
-    // Helper function to get platform info
-    const getPlatformInfo = (platformId) => {
-      const platforms = {
-        instagram: { name: 'Instagram', color: 'from-purple-500 to-pink-500' },
-        whatsapp: { name: 'WhatsApp', color: 'from-green-500 to-green-600' },
-        facebook: { name: 'Facebook', color: 'from-blue-500 to-blue-600' }
-      };
-      return platforms[platformId] || { name: platformId, color: 'from-gray-500 to-gray-600' };
-    };
-
-    // Helper function to get trigger name
-    const getTriggerName = (platformId, triggerId) => {
-      const triggers = {
-        instagram: {
-          'new_follower': 'New Follower',
-          'comment_received': 'Comment Received',
-          'story_view': 'Story View',
-          'dm_received': 'DM Received'
-        },
-        whatsapp: {
-          'message_received': 'Message Received',
-          'keyword_detected': 'Keyword Detected',
-          'contact_added': 'Contact Added'
-        },
-        facebook: {
-          'page_message': 'Page Message',
-          'post_comment': 'Post Comment',
-          'page_like': 'Page Like'
-        }
-      };
-      return triggers[platformId]?.[triggerId] || triggerId;
-    };
-
-    // Helper function to get action name
-    const getActionName = (actionId) => {
-      const actions = {
-        'send_dm': 'Send DM',
-        'auto_reply': 'Auto Reply',
-        'add_tag': 'Add Tag',
-        'add_to_list': 'Add to List',
-        'send_notification': 'Send Notification'
-      };
-      return actions[actionId] || actionId;
-    };
-
-    const platformInfo = getPlatformInfo(selectedPlatform);
-    const triggerName = getTriggerName(selectedPlatform, selectedTrigger);
-    const actionName = getActionName(selectedAction);
-
-    if (editingAutomation) {
-      // Update existing automation
-      const updatedAutomation = {
-        ...editingAutomation,
-        name: `${triggerName} → ${actionName}`,
-        platform: platformInfo.name,
-        trigger: triggerName,
-        action: actionName
-      };
-
-      setAutomations(prev => prev.map(automation => 
-        automation.id === editingAutomation.id ? updatedAutomation : automation
-      ));
-      showNotification('Automation updated successfully!');
-      setShowEditModal(false);
-      setEditingAutomation(null);
+  const handleSaveConnection = (connectionData) => {
+    if (editingConnection) {
+      setConnectedAccounts(prev => 
+        prev.map(acc => acc.id === editingConnection.id ? { ...acc, ...connectionData } : acc)
+      );
     } else {
-      // Create new automation
-      const newAutomation = {
-        id: Date.now(),
-        name: `${triggerName} → ${actionName}`,
-        platform: platformInfo.name,
-        trigger: triggerName,
-        action: actionName,
+      setConnectedAccounts(prev => [...prev, { 
+        id: Date.now(), 
+        ...connectionData,
         status: 'active',
-        created: new Date().toISOString().split('T')[0],
-        lastRun: 'Never',
-        runs: 0
-      };
-
-      setAutomations(prev => [...prev, newAutomation]);
-      showNotification('Automation created successfully!');
-      setShowCreateModal(false);
+        createdAt: new Date().toISOString()
+      }]);
     }
-    
-    // Reset form
-    setSelectedPlatform('');
-    setSelectedTrigger('');
-    setSelectedAction('');
+    setShowConnectionModal(false);
   };
 
-  // Filter automations based on search term and status
-  const filteredAutomations = automations.filter(automation => {
-    const matchesSearch = automation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         automation.platform.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         automation.trigger.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === 'all' || automation.status === filterStatus;
-    return matchesSearch && matchesStatus;
-  });
+  const handleCreateAutomation = () => {
+    setEditingAutomation(null);
+    setShowAutomationModal(true);
+  };
 
-  // Updated CreateAutomationModal component that handles both create and edit
-  const CreateAutomationModal = ({ isEdit = false }) => {
-    const isVisible = isEdit ? showEditModal : showCreateModal;
-    
-    const platforms = [
-      { id: 'instagram', name: 'Instagram', icon: 'Instagram', color: 'bg-gradient-to-r from-purple-500 to-pink-500' },
-      { id: 'whatsapp', name: 'WhatsApp', icon: 'MessageCircle', color: 'bg-green-500' },
-      { id: 'facebook', name: 'Facebook', icon: 'Facebook', color: 'bg-blue-600' }
-    ];
+  const handleEditAutomation = (automation) => {
+    setEditingAutomation(automation);
+    setShowAutomationModal(true);
+  };
 
-    const triggers = {
-      instagram: [
-        { id: 'new_follower', name: 'New Follower', description: 'When someone follows your account' },
-        { id: 'comment_received', name: 'Comment Received', description: 'When someone comments on your post' },
-        { id: 'story_view', name: 'Story View', description: 'When someone views your story' },
-        { id: 'dm_received', name: 'DM Received', description: 'When you receive a direct message' }
-      ],
-      whatsapp: [
-        { id: 'message_received', name: 'Message Received', description: 'When you receive a message' },
-        { id: 'keyword_detected', name: 'Keyword Detected', description: 'When specific keywords are mentioned' },
-        { id: 'contact_added', name: 'Contact Added', description: 'When a new contact is added' }
-      ],
-      facebook: [
-        { id: 'page_message', name: 'Page Message', description: 'When someone messages your page' },
-        { id: 'post_comment', name: 'Post Comment', description: 'When someone comments on your post' },
-        { id: 'page_like', name: 'Page Like', description: 'When someone likes your page' }
-      ]
-    };
-
-    const actions = [
-      { id: 'send_dm', name: 'Send DM', description: 'Send a direct message', icon: 'MessageSquare' },
-      { id: 'auto_reply', name: 'Auto Reply', description: 'Reply to comment/message', icon: 'MessageCircle' },
-      { id: 'add_tag', name: 'Add Tag', description: 'Tag the contact', icon: 'Tag' },
-      { id: 'add_to_list', name: 'Add to List', description: 'Add to contact list', icon: 'Users' },
-      { id: 'send_notification', name: 'Send Notification', description: 'Send notification to team', icon: 'Bell' }
-    ];
-
-    const handleClose = () => {
-      if (isEdit) {
-        setShowEditModal(false);
-        setEditingAutomation(null);
-      } else {
-        setShowCreateModal(false);
-      }
-      // Reset form
-      setSelectedPlatform('');
-      setSelectedTrigger('');
-      setSelectedAction('');
-    };
-
-    return (
-      <div className={`fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50 transition-all duration-300 ${
-        isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
-      }`}>
-        <div className={`bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto transform transition-all duration-300 ${
-          isVisible ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'
-        }`}>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900">
-              {isEdit ? 'Edit Automation' : 'Create New Automation'}
-            </h2>
-            <button 
-              onClick={handleClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <span className="sr-only">Close</span>
-              ×
-            </button>
-          </div>
-
-          <div className="space-y-6">
-            {/* Platform Selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">Choose Platform</label>
-              <div className="grid grid-cols-3 gap-3">
-                {platforms.map((platform) => (
-                  <button
-                    key={platform.id}
-                    onClick={() => setSelectedPlatform(platform.id)}
-                    className={`p-4 rounded-lg border-2 transition-all ${
-                      selectedPlatform === platform.id 
-                        ? 'border-blue-500 bg-blue-50' 
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="flex flex-col items-center space-y-2">
-                      <div className={`w-8 h-8 rounded-lg ${platform.color} flex items-center justify-center`}>
-                        <span className="text-white text-sm font-medium">{platform.icon[0]}</span>
-                      </div>
-                      <span className="text-sm font-medium">{platform.name}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Trigger Selection */}
-            {selectedPlatform && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">Define Trigger</label>
-                <div className="space-y-2">
-                  {triggers[selectedPlatform]?.map((trigger) => (
-                    <button
-                      key={trigger.id}
-                      onClick={() => setSelectedTrigger(trigger.id)}
-                      className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
-                        selectedTrigger === trigger.id 
-                          ? 'border-blue-500 bg-blue-50' 
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="font-medium text-gray-900">{trigger.name}</div>
-                      <div className="text-sm text-gray-500">{trigger.description}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Action Selection */}
-            {selectedTrigger && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">Set Action</label>
-                <div className="space-y-2">
-                  {actions.map((action) => (
-                    <button
-                      key={action.id}
-                      onClick={() => setSelectedAction(action.id)}
-                      className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
-                        selectedAction === action.id 
-                          ? 'border-blue-500 bg-blue-50' 
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className="w-5 h-5 text-gray-600 flex items-center justify-center">
-                          <span className="text-sm">{action.icon[0]}</span>
-                        </div>
-                        <div>
-                          <div className="font-medium text-gray-900">{action.name}</div>
-                          <div className="text-sm text-gray-500">{action.description}</div>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Schedule & Conditions */}
-            {selectedAction && (
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Schedule</label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">Start Time</label>
-                      <input
-                        type="time"
-                        className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">End Time</label>
-                      <input
-                        type="time"
-                        className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Conditions</label>
-                  <textarea
-                    placeholder="Add any conditions or keywords..."
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows="3"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Action Buttons */}
-            <div className="flex items-center justify-end space-x-3 pt-4 border-t">
-              <button
-                onClick={handleClose}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={createAutomation}
-                disabled={!selectedPlatform || !selectedTrigger || !selectedAction}
-                className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {isEdit ? 'Update Automation' : 'Create Automation'}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+  const handleToggleAutomation = (automationId) => {
+    setAutomations(prev => 
+      prev.map(auto => 
+        auto.id === automationId ? { ...auto, active: !auto.active } : auto
+      )
     );
   };
 
+  const handleDeleteAutomation = (automationId) => {
+    setAutomations(prev => prev.filter(auto => auto.id !== automationId));
+  };
+
+  const handleSaveAutomation = (automationData) => {
+    if (editingAutomation) {
+      setAutomations(prev => 
+        prev.map(auto => auto.id === editingAutomation.id ? { ...auto, ...automationData } : auto)
+      );
+    } else {
+      setAutomations(prev => [...prev, { 
+        id: Date.now(), 
+        ...automationData,
+        active: true,
+        createdAt: new Date().toISOString()
+      }]);
+    }
+    setShowAutomationModal(false);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Automation Manager</h1>
-          <p className="text-gray-600 mt-2">Create and manage your social media automation workflows</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Integrations</h1>
+          <p className="text-gray-600">Connect your social platforms and create AI-powered automations</p>
         </div>
 
-        {/* Tabs */}
-        <div className="mb-8">
-          <nav className="flex space-x-8">
-            <button
-              onClick={() => setActiveTab('accounts')}
-              className={`pb-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'accounts'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              Connected Accounts
-            </button>
-            <button
-              onClick={() => setActiveTab('automations')}
-              className={`pb-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'automations'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              Automations
-            </button>
-          </nav>
-        </div>
-
-        {/* Connected Accounts Tab */}
-        {activeTab === 'accounts' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">Social Media Accounts</h2>
-              <button 
-                onClick={() => setShowConnectModal(true)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-600 transition-colors"
-              >
-                <Link className="w-4 h-4" />
-                <span>Connect Account</span>
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {connectedAccounts.map((account) => (
-                <div key={account.id} className="opacity-100 transition-opacity duration-300">
-                  <ConnectedAccountCard 
-                    account={account} 
-                    handleDisconnect={handleDisconnect} 
-                  />
-                </div>
-              ))}
-            </div>
+        {/* Connected Accounts Section */}
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-900">Connected Accounts</h2>
           </div>
-        )}
 
-        {/* Automations Tab */}
-        {activeTab === 'automations' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">Automation Workflows</h2>
-              <button 
-                onClick={() => setShowCreateModal(true)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-600 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Create Automation</span>
-              </button>
-            </div>
-
-            {/* Filters */}
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
-                <input
-                  type="text"
-                  placeholder="Search automations..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Filter className="w-4 h-4 text-gray-400" />
-                <select 
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                  className="px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          {/* Platform Connection Buttons */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {Object.entries(platforms).map(([key, platform]) => {
+              const Icon = platform.icon;
+              const hasConnection = connectedAccounts.some(acc => acc.platform === key);
+              
+              return (
+                <button
+                  key={key}
+                  onClick={() => handleAddConnection(key)}
+                  className={`relative p-6 rounded-xl border-2 border-dashed transition-all duration-200 ${
+                    hasConnection 
+                      ? 'border-gray-300 hover:border-gray-400' 
+                      : 'border-gray-300 hover:border-gray-400'
+                  }`}
                 >
-                  <option value="all">All Status</option>
-                  <option value="active">Active</option>
-                  <option value="paused">Paused</option>
-                  <option value="draft">Draft</option>
-                </select>
+                  <div className="flex flex-col items-center gap-3">
+                    <div className={`p-4 rounded-lg ${platform.color} text-white`}>
+                      <Icon size={28} />
+                    </div>
+                    <div className="text-center">
+                      <h3 className="font-semibold text-gray-900">{platform.name}</h3>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {hasConnection ? 'Add another account' : 'Connect account'}
+                      </p>
+                    </div>
+                  </div>
+                  {hasConnection && (
+                    <div className="absolute top-3 right-3 w-3 h-3 bg-green-500 rounded-full"></div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Connected Account Cards */}
+          {connectedAccounts.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {connectedAccounts.map(connection => (
+                <ConnectionCard
+                  key={connection.id}
+                  connection={connection}
+                  onEdit={handleEditConnection}
+                  onDisconnect={handleDisconnect}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Automations Section */}
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-900">AI Automations</h2>
+            <button
+              onClick={handleCreateAutomation}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Plus size={20} />
+              Create Automation
+            </button>
+          </div>
+
+          {automations.length === 0 ? (
+            <div className="bg-white rounded-xl border-2 border-dashed border-gray-300 p-12 text-center">
+              <div className="max-w-sm mx-auto">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Plus size={24} className="text-gray-400" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No automations yet</h3>
+                <p className="text-gray-500 mb-4">
+                  Create your first AI automation to start engaging with your audience automatically
+                </p>
+                <button
+                  onClick={handleCreateAutomation}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Create Automation
+                </button>
               </div>
             </div>
-
-            {/* Automation Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredAutomations.map((automation) => (
-                <div key={automation.id} className="opacity-100 transition-all duration-300">
-                  <AutomationCard 
-                    automation={automation}
-                    showDropdown={showDropdown}
-                    setShowDropdown={setShowDropdown}
-                    toggleAutomationStatus={toggleAutomationStatus}
-                    copyAutomation={copyAutomation}
-                    handleDeleteAutomation={handleDeleteAutomation}
-                    handleEditAutomation={handleEditAutomation}
-                  />
-                </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {automations.map(automation => (
+                <AutomationCard
+                  key={automation.id}
+                  automation={automation}
+                  onToggle={handleToggleAutomation}
+                  onEdit={handleEditAutomation}
+                  onDelete={handleDeleteAutomation}
+                />
               ))}
-              {filteredAutomations.length === 0 && (
-                <div className="col-span-full text-center py-12">
-                  <div className="text-gray-400 mb-4">
-                    <Search className="w-12 h-12 mx-auto" />
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No automations found</h3>
-                  <p className="text-gray-500">Try adjusting your search or filters</p>
-                </div>
-              )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
+      </div>
 
-        {/* Create Automation Modal */}
-        {showCreateModal && <CreateAutomationModal isEdit={false} />}
-
-        {/* Edit Automation Modal */}
-        {showEditModal && <CreateAutomationModal isEdit={true} />}
-
-        {/* Connect Account Modal */}
-        <ConnectAccountModal 
-          showConnectModal={showConnectModal}
-          setShowConnectModal={setShowConnectModal}
-          connectAccount={connectAccount}
+      {/* Modals */}
+      {showConnectionModal && (
+        <ConnectionModal
+          platform={selectedPlatform}
+          editingConnection={editingConnection}
+          onClose={() => setShowConnectionModal(false)}
+          onSave={handleSaveConnection}
         />
+      )}
 
-        {/* Disconnect Confirmation Modal */}
-        <DisconnectModal 
-          showDisconnectModal={showDisconnectModal}
-          setShowDisconnectModal={setShowDisconnectModal}
-          disconnectAccount={disconnectAccount}
-          confirmDisconnect={confirmDisconnect}
+      {showAutomationModal && (
+        <AutomationModal
+          editingAutomation={editingAutomation}
+          connectedAccounts={connectedAccounts}
+          onClose={() => setShowAutomationModal(false)}
+          onSave={handleSaveAutomation}
         />
-
-        {/* Delete Confirmation Modal */}
-        <DeleteAutomationModal 
-          showDeleteModal={showDeleteModal}
-          setShowDeleteModal={setShowDeleteModal}
-          deleteAutomation={deleteAutomation}
-          confirmDelete={confirmDelete}
-        />
-
-        {/* Toast Notification */}
-        <ToastNotification 
-          showToast={showToast}
-          toastMessage={toastMessage}
-          toastType={toastType}
-        />
-      </main>
+      )}
     </div>
   );
 };

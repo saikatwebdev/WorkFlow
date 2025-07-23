@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 export const useIntegrationState = () => {
   const [activeTab, setActiveTab] = useState('automations');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingAutomation, setEditingAutomation] = useState(null);
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [showDisconnectModal, setShowDisconnectModal] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState('');
@@ -86,6 +88,8 @@ export const useIntegrationState = () => {
   return {
     activeTab, setActiveTab,
     showCreateModal, setShowCreateModal,
+    showEditModal, setShowEditModal,
+    editingAutomation, setEditingAutomation,
     showConnectModal, setShowConnectModal,
     showDisconnectModal, setShowDisconnectModal,
     selectedPlatform, setSelectedPlatform,
