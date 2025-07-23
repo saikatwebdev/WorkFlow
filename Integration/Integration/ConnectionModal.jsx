@@ -9,6 +9,7 @@ const ConnectionModal = ({ platform, editingConnection, onClose, onSave }) => {
     phoneNumber: '',
     apiKey: '',
     apiSecret: '',
+    manychatToken: '',
     pageNames: [],
     username: '',
     followers: ''
@@ -21,6 +22,7 @@ const ConnectionModal = ({ platform, editingConnection, onClose, onSave }) => {
         phoneNumber: editingConnection.phoneNumber || '',
         apiKey: editingConnection.apiKey || '',
         apiSecret: editingConnection.apiSecret || '',
+        manychatToken: editingConnection.manychatToken || '',
         pageNames: editingConnection.pageNames || [],
         username: editingConnection.username || '',
         followers: editingConnection.followers || ''
@@ -86,6 +88,23 @@ const ConnectionModal = ({ platform, editingConnection, onClose, onSave }) => {
                   onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="+1234567890"
+                />
+              </div>
+            </div>
+          );
+        case 'manychat':
+          return (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  ManyChat API Token
+                </label>
+                <input
+                  type="text"
+                  value={formData.manychatToken}
+                  onChange={(e) => setFormData({ ...formData, manychatToken: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter your ManyChat API token"
                 />
               </div>
             </div>

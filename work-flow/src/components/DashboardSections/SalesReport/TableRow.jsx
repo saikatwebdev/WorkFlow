@@ -22,11 +22,6 @@ const TableRow = ({ sale }) => {
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
         {sale.product}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        <span className="px-2 py-1 text-xs rounded-full bg-gray-100">
-          {sale.category}
-        </span>
-      </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
         {sale.quantity}
       </td>

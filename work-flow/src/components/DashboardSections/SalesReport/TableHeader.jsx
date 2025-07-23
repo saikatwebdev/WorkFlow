@@ -5,7 +5,6 @@ const TableHeader = ({ sortConfig, onSort }) => {
   const columns = [
     { key: 'date', label: 'Date' },
     { key: 'product', label: 'Product' },
-    { key: 'category', label: 'Category' },
     { key: 'quantity', label: 'Quantity' },
     { key: 'amount', label: 'Amount' },
     { key: 'customer', label: 'Customer' },
@@ -22,7 +21,7 @@ const TableHeader = ({ sortConfig, onSort }) => {
   };
 
   return (
-    <thead className="bg-gray-50 sticky top-0 z-10">
+    <thead className="bg-gray-50 sticky top-0">
       <tr>
         {columns.map(column => (
           <th

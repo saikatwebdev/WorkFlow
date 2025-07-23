@@ -8,7 +8,6 @@ const FilterSection = ({
   onClearFilters, 
   showFilters, 
   onToggleFilters,
-  categories,
   statuses 
 }) => {
   // Count active filters (excluding search)
@@ -61,7 +60,6 @@ const FilterSection = ({
         <FilterPanel
           filters={filters}
           onFilterChange={onFilterChange}
-          categories={categories}
           statuses={statuses}
         />
       )}

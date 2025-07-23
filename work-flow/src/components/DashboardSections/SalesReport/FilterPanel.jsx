@@ -1,18 +1,7 @@
 import React from 'react';
 
-const FilterPanel = ({ filters, onFilterChange, categories, statuses }) => {
-  const filterFields = [
-    {
-      type: 'select',
-      name: 'category',
-      label: 'Category',
-      value: filters.category,
-      options: [
-        { value: '', label: 'All Categories' },
-        ...categories.map(cat => ({ value: cat, label: cat }))
-      ]
-    },
-    {
+const FilterPanel = ({ filters, onFilterChange, Products, statuses }) => {
+  const filterFields = [    {
       type: 'select',
       name: 'status',
       label: 'Status',
@@ -81,7 +70,7 @@ const FilterPanel = ({ filters, onFilterChange, categories, statuses }) => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 pt-4 border-t border-gray-200">
+    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 pt-4 border-t border-gray-200 ">
       {filterFields.map(field => (
         <div key={field.name}>
           <label className="block text-sm font-medium text-gray-700 mb-1">

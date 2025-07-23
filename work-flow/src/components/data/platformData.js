@@ -7,7 +7,6 @@ export const platforms = {
     color: 'bg-green-500',
     connectionTypes: [
       { id: 'api', name: 'Connect via API', description: 'Use your WhatsApp Business API credentials' },
-      { id: 'manychat', name: 'Connect using ManyChat', description: 'Integration through ManyChat platform' },
       { id: 'new', name: 'Create New Number', description: 'Generate a new WhatsApp Business number' }
     ]
   },

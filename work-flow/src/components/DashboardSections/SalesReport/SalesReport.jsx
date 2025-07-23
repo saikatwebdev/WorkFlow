@@ -14,7 +14,6 @@ const SalesReport = () => {
   const [salesData] = useState(initialSalesData);
   const [filters, setFilters] = useState({
     search: '',
-    category: '',
     dateFrom: '',
     dateTo: '',
     minAmount: '',
@@ -28,7 +27,6 @@ const SalesReport = () => {
 
   // Memoized unique values for filters
   const { categories, statuses } = useMemo(() => ({
-    categories: [...new Set(salesData.map(item => item.category))],
     statuses: [...new Set(salesData.map(item => item.status))]
   }), [salesData]);
 
@@ -45,7 +43,6 @@ const SalesReport = () => {
       }
 
       // Direct property checks
-      if (filters.category && item.category !== filters.category) return false;
       if (filters.status && item.status !== filters.status) return false;
       if (filters.dateFrom && item.date < filters.dateFrom) return false;
       if (filters.dateTo && item.date > filters.dateTo) return false;
@@ -111,7 +108,6 @@ const SalesReport = () => {
   const clearFilters = useCallback(() => {
     setFilters({
       search: '',
-      category: '',
       dateFrom: '',
       dateTo: '',
       minAmount: '',
@@ -145,7 +141,6 @@ const SalesReport = () => {
       const exportData = filteredAndSortedData.map(item => ({
         'Date': item.date,
         'Product': item.product,
-        'Category': item.category,
         'Quantity': item.quantity,
         'Amount': `$${item.amount.toFixed(2)}`,
         'Customer': item.customer,
