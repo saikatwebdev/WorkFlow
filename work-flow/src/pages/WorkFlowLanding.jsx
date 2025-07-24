@@ -41,6 +41,7 @@ const WorkFlowLanding = () => {
     setShowModal(false);
     navigate("/dashboard");
   };
+  
 
   //end of Sign in and Log in Modal and form validation
 

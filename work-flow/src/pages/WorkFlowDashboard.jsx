@@ -154,7 +154,7 @@ const WorkFlowDashboard = () => {
         <main className="flex-1 p-2 lg:p-2 overflow-y-auto">
           {/* Content Area with Routes */}
           <Routes>
-            <Route path="/" element={<Navigate to="/dashboard/profile" replace />} />
+            <Route path="/dashboard" element={<Navigate to="/dashboard/profile" replace />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/ai-fine-tuning" element={<AIFineTuning />} />
