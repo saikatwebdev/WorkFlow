@@ -2,6 +2,128 @@ import React, { useState, useEffect } from 'react';
 import ChatList from './whatsapp/ChatList';
 import ChatWindow from './whatsapp/ChatWindow';
 import ChatFilter from './whatsapp/ChatFilter';
+import CustomerDetails from './whatsapp/CustomerDetails';
+
+// Mock customer data - in production, this would come from your API
+const customerData = {
+  1: {
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    phone: '+1 (555) 123-4567',
+    location: 'New York, USA',
+    company: 'Tech Solutions Inc.',
+    timezone: 'EST (UTC-5)',
+    lastSeen: '2 minutes ago',
+    joinedDate: 'January 15, 2024',
+    totalPurchases: 12,
+    lifetimeValue: '$2,450',
+    preferredLanguage: 'English',
+    customerSince: '1 year ago',
+    tags: ['Premium', 'Tech Industry', 'Responsive'],
+    notes: 'Prefers email communication. Key decision maker for company purchases.',
+    recentOrders: [
+      { id: 'ORD-001', date: '2024-12-15', amount: '$350', status: 'Delivered' },
+      { id: 'ORD-002', date: '2024-11-28', amount: '$180', status: 'Delivered' }
+    ]
+  },
+  2: {
+    name: 'Sarah Wilson',
+    email: 'sarah.wilson@company.com',
+    phone: '+1 (555) 234-5678',
+    location: 'Los Angeles, CA',
+    company: 'Creative Agency',
+    timezone: 'PST (UTC-8)',
+    lastSeen: '1 hour ago',
+    joinedDate: 'March 22, 2024',
+    totalPurchases: 8,
+    lifetimeValue: '$1,820',
+    preferredLanguage: 'English',
+    customerSince: '10 months ago',
+    tags: ['Regular', 'Creative', 'Mobile User'],
+    notes: 'Interested in bulk discounts. Usually orders on behalf of her team.',
+    recentOrders: [
+      { id: 'ORD-003', date: '2024-12-20', amount: '$220', status: 'Processing' },
+      { id: 'ORD-004', date: '2024-12-01', amount: '$150', status: 'Delivered' }
+    ]
+  },
+  3: {
+    name: 'Project Team',
+    email: 'team@projectgroup.com',
+    phone: '+1 (555) 345-6789',
+    location: 'Chicago, IL',
+    company: 'Project Group LLC',
+    timezone: 'CST (UTC-6)',
+    lastSeen: '1 day ago',
+    joinedDate: 'June 10, 2024',
+    totalPurchases: 5,
+    lifetimeValue: '$980',
+    preferredLanguage: 'English',
+    customerSince: '7 months ago',
+    tags: ['Team Account', 'B2B', 'Quarterly Orders'],
+    notes: 'Group account with multiple stakeholders. Requires approval for orders over $500.',
+    recentOrders: [
+      { id: 'ORD-005', date: '2024-11-30', amount: '$450', status: 'Delivered' }
+    ]
+  },
+  4: {
+    name: 'Client Support',
+    email: 'support@clientcorp.com',
+    phone: '+1 (555) 456-7890',
+    location: 'Austin, TX',
+    company: 'Client Corp',
+    timezone: 'CST (UTC-6)',
+    lastSeen: '3 days ago',
+    joinedDate: 'September 5, 2024',
+    totalPurchases: 3,
+    lifetimeValue: '$560',
+    preferredLanguage: 'English',
+    customerSince: '4 months ago',
+    tags: ['New Customer', 'Support Team'],
+    notes: 'Recently onboarded. May need additional guidance with platform features.',
+    recentOrders: [
+      { id: 'ORD-006', date: '2024-12-10', amount: '$120', status: 'Delivered' }
+    ]
+  },
+  5: {
+    name: 'Alex Chen',
+    email: 'alex.chen@startup.io',
+    phone: '+1 (555) 567-8901',
+    location: 'Seattle, WA',
+    company: 'Innovation Startup',
+    timezone: 'PST (UTC-8)',
+    lastSeen: '5 hours ago',
+    joinedDate: 'November 1, 2024',
+    totalPurchases: 2,
+    lifetimeValue: '$320',
+    preferredLanguage: 'English',
+    customerSince: '2 months ago',
+    tags: ['Startup', 'Growth Potential'],
+    notes: 'Founder of a growing startup. Interested in partnership opportunities.',
+    recentOrders: [
+      { id: 'ORD-007', date: '2024-12-22', amount: '$200', status: 'Shipped' }
+    ]
+  },
+  6: {
+    name: 'Design Review',
+    email: 'design@reviewstudio.com',
+    phone: '+1 (555) 678-9012',
+    location: 'San Francisco, CA',
+    company: 'Review Studio',
+    timezone: 'PST (UTC-8)',
+    lastSeen: '2 days ago',
+    joinedDate: 'August 15, 2024',
+    totalPurchases: 7,
+    lifetimeValue: '$1,340',
+    preferredLanguage: 'English',
+    customerSince: '5 months ago',
+    tags: ['Design Agency', 'Frequent Buyer'],
+    notes: 'Values quick turnaround times. Often needs rush delivery.',
+    recentOrders: [
+      { id: 'ORD-008', date: '2024-12-18', amount: '$280', status: 'Delivered' },
+      { id: 'ORD-009', date: '2024-12-05', amount: '$190', status: 'Delivered' }
+    ]
+  }
+};
 
 function WhatsappChat() {
   const [chats, setChats] = useState([
@@ -18,6 +140,7 @@ function WhatsappChat() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [aiMode, setAiMode] = useState(false);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(true);
 
   // Handle status change from ChatWindow
   const handleStatusChange = (chatId, newStatus) => {
@@ -193,7 +316,19 @@ function WhatsappChat() {
         aiMode={aiMode}
         onToggleAI={() => setAiMode(!aiMode)}
         onStatusChange={handleStatusChange}
+        isDetailsOpen={isDetailsOpen}
+        onToggleDetails={() => setIsDetailsOpen(!isDetailsOpen)}
       />
+
+      {/* Customer Details Panel */}
+      {activeChat && (
+        <CustomerDetails
+          customer={customerData[activeChat.id]}
+          isOpen={isDetailsOpen}
+          onClose={() => setIsDetailsOpen(false)}
+          messages={messages}
+        />
+      )}
     </div>
   );
 }

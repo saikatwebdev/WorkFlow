@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, User, Bot, ChevronDown } from 'lucide-react';
+import { Send, User, Bot, ChevronDown, ChevronRight } from 'lucide-react';
 import Message from './Message';
 
-const ChatWindow = ({ activeChat, messages, onSendMessage, aiMode, onToggleAI, onStatusChange }) => {
+const ChatWindow = ({ activeChat, messages, onSendMessage, aiMode, onToggleAI, onStatusChange, isDetailsOpen, onToggleDetails }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const messagesEndRef = useRef(null);
@@ -121,12 +121,28 @@ const ChatWindow = ({ activeChat, messages, onSendMessage, aiMode, onToggleAI, o
               </div>
             </div>
           </div>
-          {aiMode && (
-            <div className="flex items-center space-x-2 bg-green-100 px-3 py-1 rounded-full">
-              <Bot className="w-4 h-4 text-green-600" />
-              <span className="text-sm font-medium text-green-600">AI Active</span>
-            </div>
-          )}
+          
+          <div className="flex items-center space-x-3">
+            {aiMode && (
+              <div className="flex items-center space-x-2 bg-green-100 px-3 py-1 rounded-full">
+                <Bot className="w-4 h-4 text-green-600" />
+                <span className="text-sm font-medium text-green-600">AI Active</span>
+              </div>
+            )}
+            
+            {/* Toggle Details Button */}
+            <button
+              onClick={onToggleDetails}
+              className={`p-2 rounded-lg transition-all ${
+                isDetailsOpen 
+                  ? 'bg-purple-100 text-purple-600' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+              title={isDetailsOpen ? 'Hide customer details' : 'Show customer details'}
+            >
+              <ChevronRight className={`w-5 h-5 transition-transform ${isDetailsOpen ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
         </div>
       </div>
 
