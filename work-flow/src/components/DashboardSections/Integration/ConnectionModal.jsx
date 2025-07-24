@@ -8,7 +8,6 @@ const ConnectionModal = ({ platform, editingConnection, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     phoneNumber: '',
     apiKey: '',
-    apiSecret: '',
     pageNames: [],
     username: '',
     followers: ''
@@ -20,7 +19,6 @@ const ConnectionModal = ({ platform, editingConnection, onClose, onSave }) => {
       setFormData({
         phoneNumber: editingConnection.phoneNumber || '',
         apiKey: editingConnection.apiKey || '',
-        apiSecret: editingConnection.apiSecret || '',
         pageNames: editingConnection.pageNames || [],
         username: editingConnection.username || '',
         followers: editingConnection.followers || ''
@@ -62,18 +60,6 @@ const ConnectionModal = ({ platform, editingConnection, onClose, onSave }) => {
                   onChange={(e) => setFormData({ ...formData, apiKey: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter your WhatsApp Business API key"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  API Secret
-                </label>
-                <input
-                  type="password"
-                  value={formData.apiSecret}
-                  onChange={(e) => setFormData({ ...formData, apiSecret: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter your API secret"
                 />
               </div>
               <div>

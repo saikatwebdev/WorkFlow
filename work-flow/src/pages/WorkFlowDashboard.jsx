@@ -9,7 +9,8 @@ import {
   LogOut,
   BarChart3,
   Users,
-  Activity
+  Activity,
+  Target
 } from 'lucide-react';
 
 // Import dashboard section components
@@ -19,9 +20,9 @@ import AIFineTuning from '../components/DashboardSections/AIFineTuning/AIFineTun
 import Integration from '../components/DashboardSections/Integration/Integration';
 import SalesReport from '../components/DashboardSections/SalesReport/SalesReport';
 import Navbar from '../components/Navbar/Navbar';
-import WhatsappChat from '../components/DashboardSections/Chats/WhatsappChat';
+import Chats from '../components/DashboardSections/Chats/Chats'
 import SignOutModal from '../components/SignOutModal';
-
+import CampaignsDemo from '../components/CreateCampaign/CampaignsDemo';
 const WorkFlowDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
@@ -32,6 +33,7 @@ const WorkFlowDashboard = () => {
     { icon: Users, label: 'User Profile', path: 'profile' },
     { icon: BarChart3, label: 'Analytics', path: 'analytics' },
     { icon: Settings, label: 'AI Fine-Tuning', path: 'ai-fine-tuning' },
+     { icon: Target, label: 'Campaigns', path: 'campaigns' },
     { icon: Share2, label: 'Integration', path: 'integration' },
     { icon: MessagesSquare, label: 'Chats', path: 'chats' },
     { icon: FileText, label: 'Sales & Reports', path: 'sales-reports' },
@@ -157,9 +159,10 @@ const WorkFlowDashboard = () => {
             <Route path="/dashboard" element={<Navigate to="/dashboard/profile" replace />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/campaigns" element={<CampaignsDemo />} />
             <Route path="/ai-fine-tuning" element={<AIFineTuning />} />
             <Route path="/integration" element={<Integration />} />
-            <Route path="/chats" element={<WhatsappChat />} />
+            <Route path="/chats" element={<Chats />} />
             <Route path="/sales-reports" element={<SalesReport />} />
             <Route path="*" element={<Navigate to="/dashboard/profile" replace />} />
           </Routes>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import ChatList from './whatsapp/ChatList';
-import ChatWindow from './whatsapp/ChatWindow';
-import ChatFilter from './whatsapp/ChatFilter';
-import CustomerDetails from './whatsapp/CustomerDetails';
+import ChatList from './ChatList';
+import ChatWindow from './ChatWindow';
+import ChatFilter from './ChatFilter';
+import CustomerDetails from './CustomerDetails';
 
 // Mock customer data - in production, this would come from your API
 const customerData = {
