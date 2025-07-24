@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import Navbar from "../components/LandingPage/Navbar";
 import Auth from "../components/LandingPage/AuthModal";
 import HeroSection from "../components/LandingPage/Hero";
@@ -19,6 +20,8 @@ const WorkFlowLanding = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
   //Sign in and Log in Modal and form validation
   const validateForm = () => {
     const newErrors = {};
@@ -35,13 +38,63 @@ const WorkFlowLanding = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  const handleSubmit = () => {
+
+  const handleSubmit = async () => {
     if (!validateForm()) return;
-    //Simulate login success
-    setShowModal(false);
-    navigate("/dashboard");
+    
+    setIsLoading(true);
+    
+    try {
+      const endpoint = isLogin ? '/api/auth/signin' : '/api/auth/signup';
+      const response = await fetch(`http://localhost:5000${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Store token and user info
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify({
+          id: data.user.id,
+          email: data.user.email,
+          role: data.user.role || 'user' // Default to 'user' if role not provided
+        }));
+
+        toast.success(data.message || (isLogin ? 'Signed in successfully!' : 'Account created successfully!'));
+        setShowModal(false);
+        
+        // Navigate based on user role
+        const userRole = data.user.role || 'user';
+        if (userRole === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
+        
+        // Reset form
+        setEmail('');
+        setPassword('');
+        setErrors({});
+      } else {
+        // Handle validation errors from server
+        if (data.errors) {
+          setErrors(data.errors);
+        } else {
+          toast.error(data.message || 'Authentication failed');
+        }
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      toast.error('Network error. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
-  
 
   //end of Sign in and Log in Modal and form validation
 
@@ -70,6 +123,7 @@ const WorkFlowLanding = () => {
         errors={errors}
         setErrors={setErrors}
         handleSubmit={handleSubmit}
+        isLoading={isLoading}
       />
       <RevealOnScroll>
         <HeroSection />

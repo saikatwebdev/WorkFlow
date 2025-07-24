@@ -175,7 +175,8 @@ app.post('/api/auth/signup', validateAuthInput, async (req, res) => {
       token,
       user: {
         id: user._id,
-        email: user.email
+        email: user.email,
+        role: user.role
       }
     });
   } catch (error) {
@@ -216,7 +217,8 @@ app.post('/api/auth/signin', validateAuthInput, async (req, res) => {
       token,
       user: {
         id: user._id,
-        email: user.email
+        email: user.email,
+        role: user.role
       }
     });
   } catch (error) {
@@ -488,37 +490,6 @@ app.post('/api/admin/users/:userId/reset-password', adminMiddleware, async (req,
     });
   } catch (error) {
     res.status(500).json({ message: 'Error resetting password', error: error.message });
-  }
-});
-
-// IMPORTANT: Create first admin user - Run this once
-// You can create a setup script or add this temporary route
-app.post('/api/setup/create-admin', async (req, res) => {
-  try {
-    const adminExists = await User.findOne({ role: 'admin' });
-    if (adminExists) {
-      return res.status(400).json({ message: 'Admin user already exists' });
-    }
-
-    const adminUser = new User({
-      email: 'admin@workflow.com',
-      password: 'admin123', // Change this!
-      name: 'Admin User',
-      role: 'admin'
-    });
-
-    await adminUser.save();
-
-    res.json({
-      success: true,
-      message: 'Admin user created successfully',
-      credentials: {
-        email: 'admin@workflow.com',
-        password: 'admin123'
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating admin', error: error.message });
   }
 });
 

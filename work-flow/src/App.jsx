@@ -6,55 +6,33 @@ import {
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import LandingPage from "./pages/WorkFlowLanding";
-import Dashboard from "./pages/WorkFlowDashboard";
-import AdminDashboard from "./components/AdminDashboard";
+import Dashboard from "./pages/WorkFlowDashboard"
+import AdminDashboard from "./pages/AdminDashboard";
 
-// 🚨 TEMPORARY: Bypass authentication for testing
-const BYPASS_AUTH = true; // Set to false when you want real authentication
+// ProtectedRoute component with role-based rendering
+const ProtectedRoute = ({ children, adminOnly = false }) => {
+  const userString = localStorage.getItem("user");
 
-const ProtectedRoute = ({ children }) => {
-  if (BYPASS_AUTH) {
-    console.log("🔓 Auth bypassed for testing");
-    return children;
-  }
-
-  const userString = localStorage.getItem("user"); // ✅ Changed to "user"
-  console.log("🔍 Raw localStorage data:", userString);
-  
   let currentUser = null;
   try {
     currentUser = userString ? JSON.parse(userString) : null;
   } catch (error) {
-    console.error("❌ Error parsing user from localStorage:", error);
-    localStorage.removeItem("user"); // ✅ Changed to "user"
+    console.error("Error parsing user from localStorage:", error);
+    localStorage.removeItem("user");
   }
-  
-  console.log("👤 Parsed currentUser:", currentUser);
+
   const isAuthenticated = !!currentUser;
 
-  return isAuthenticated ? children : <Navigate to="/" replace />;
+  if (!isAuthenticated) return <Navigate to="/" replace />;
+
+  if (adminOnly && currentUser.role !== "admin") {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
 };
 
 function App() {
-  // For testing: mock current user when bypassing auth
-  let currentUser = null;
-  
-  if (BYPASS_AUTH) {
-    // 🚨 CHANGE THIS to test different roles
-    currentUser = { id: 1, role: "admin", name: "Test Admin" }; // or role: "user"
-    console.log("🔓 Using mock user for testing:", currentUser);
-  } else {
-    const userString = localStorage.getItem("user"); // ✅ Changed to "user"
-    try {
-      currentUser = userString ? JSON.parse(userString) : null;
-    } catch (error) {
-      console.error("❌ Error parsing user in App:", error);
-      localStorage.removeItem("user"); // ✅ Changed to "user"
-    }
-  }
-
-  console.log("🏠 App component - currentUser:", currentUser);
-
   return (
     <Router>
       <Toaster
@@ -76,35 +54,27 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
 
-        {/* Regular user dashboard route */}
+        {/* Regular user and admin route */}
         <Route
           path="/dashboard/*"
           element={
             <ProtectedRoute>
-              {currentUser?.role === "admin" ? (
-                <Navigate to="/admin" replace />
-              ) : (
-                <Dashboard />
-              )}
+              <Dashboard/>
             </ProtectedRoute>
           }
         />
 
-        {/* Admin route */}
+        {/* Admin-only route */}
         <Route
           path="/admin"
           element={
-            <ProtectedRoute>
-              {currentUser?.role === "admin" ? (
-                <AdminDashboard />
-              ) : (
-                <Navigate to="/dashboard" replace />
-              )}
+            <ProtectedRoute adminOnly={true}>
+              <AdminDashboard />
             </ProtectedRoute>
           }
         />
 
-        {/* Catch-all redirect */}
+        {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

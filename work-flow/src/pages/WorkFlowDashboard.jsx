@@ -70,7 +70,7 @@ const WorkFlowDashboard = () => {
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 backdrop-blur-lg z-50 animate-fadeIn lg:hidden"
+          className="fixed inset-0 backdrop-blur-sm bg-opacity-50 z-50 animate-fadeIn lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -78,7 +78,7 @@ const WorkFlowDashboard = () => {
       {/* Sidebar */}
       <div className={`fixed lg:static inset-y-0 left-0 w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-      } lg:w-16 lg:shadow-sm flex flex-col`}>
+      } lg:w-16 lg:shadow-sm flex flex-col z-50`}>
         {/* Logo */}
         <div className="p-4 lg:p-3 flex items-center justify-between lg:justify-center">
           <div className="flex items-center space-x-3 lg:space-x-0">
