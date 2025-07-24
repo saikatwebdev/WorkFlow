@@ -20,6 +20,10 @@ const MessengerChat = () => {
   const clientSimulationTimeouts = useRef({});
   const aiReplyTimeouts = useRef({});
 
+  // State for AI tools panel
+  const [showAITools, setShowAITools] = useState(true);
+  const [activeAITool, setActiveAITool] = useState('summary'); // 'summary' or 'quickReplies'
+
   // Predefined client messages for simulation
   const clientMessages = [
     "Can you help me with pricing?",
@@ -233,10 +237,6 @@ const MessengerChat = () => {
     }));
   };
 
-  // State for AI tools panel
-  const [showAITools, setShowAITools] = useState(true);
-  const [activeAITool, setActiveAITool] = useState('summary'); // 'summary' or 'quickReplies'
-
   // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
@@ -348,8 +348,6 @@ const MessengerChat = () => {
                 </div>
               </div>
 
-
-
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages[selectedContact.id]?.map((message) => (
@@ -410,72 +408,75 @@ const MessengerChat = () => {
           )}
         </div>
 
-        {/* Right Panel - AI Tools and Profile */}
-        <div className="flex flex-col w-80 border-l border-gray-200 bg-white">
-          {/* AI Tools Toggle */}
-          <div className="border-b border-gray-200 p-2">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium text-gray-700 px-2">AI Assistant</h3>
-              <button 
-                onClick={() => setShowAITools(!showAITools)}
-                className="p-1 rounded-md hover:bg-gray-100"
-              >
-                {showAITools ? (
-                  <ChevronUp className="w-4 h-4 text-gray-500" />
-                ) : (
-                  <ChevronDown className="w-4 h-4 text-gray-500" />
-                )}
-              </button>
+        {/* Right Panel - AI Tools and Profile - FIXED LAYOUT */}
+        <div className="w-80 border-l border-gray-200 bg-white flex flex-col">
+          {/* AI Tools Section */}
+          <div className="border-b border-gray-200">
+            {/* AI Tools Header */}
+            <div className="p-3 border-b border-gray-100">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-gray-700">AI Assistant</h3>
+                <button 
+                  onClick={() => setShowAITools(!showAITools)}
+                  className="p-1 rounded-md hover:bg-gray-100"
+                >
+                  {showAITools ? (
+                    <ChevronUp className="w-4 h-4 text-gray-500" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-gray-500" />
+                  )}
+                </button>
+              </div>
+              
+              {showAITools && (
+                <div className="flex border-b border-gray-100 mt-2">
+                  <button
+                    onClick={() => setActiveAITool('summary')}
+                    className={`flex-1 py-2 text-sm font-medium ${
+                      activeAITool === 'summary' 
+                        ? 'text-blue-600 border-b-2 border-blue-500' 
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    Summary
+                  </button>
+                  <button
+                    onClick={() => setActiveAITool('quickReplies')}
+                    className={`flex-1 py-2 text-sm font-medium ${
+                      activeAITool === 'quickReplies' 
+                        ? 'text-blue-600 border-b-2 border-blue-500' 
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    Quick Replies
+                  </button>
+                </div>
+              )}
             </div>
             
+            {/* AI Tools Content - Fixed Height */}
             {showAITools && (
-              <div className="flex border-b border-gray-100 mt-2">
-                <button
-                  onClick={() => setActiveAITool('summary')}
-                  className={`flex-1 py-2 text-sm font-medium ${
-                    activeAITool === 'summary' 
-                      ? 'text-blue-600 border-b-2 border-blue-500' 
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  Summary
-                </button>
-                <button
-                  onClick={() => setActiveAITool('quickReplies')}
-                  className={`flex-1 py-2 text-sm font-medium ${
-                    activeAITool === 'quickReplies' 
-                      ? 'text-blue-600 border-b-2 border-blue-500' 
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  Quick Replies
-                </button>
+              <div className="h-64 overflow-y-auto p-3">
+                {activeAITool === 'summary' ? (
+                  <ChatSummary 
+                    contact={selectedContact} 
+                    messages={messages[selectedContact?.id] || []} 
+                    isVisible={true}
+                    onToggle={() => {}}
+                  />
+                ) : (
+                  <QuickReplies 
+                    onSelectReply={handleQuickReplySelect}
+                    isVisible={true}
+                    onToggle={() => {}}
+                  />
+                )}
               </div>
             )}
           </div>
           
-          {/* AI Tools Content */}
-          {showAITools && (
-            <div className="flex-1 overflow-y-auto p-4">
-              {activeAITool === 'summary' ? (
-                <ChatSummary 
-                  contact={selectedContact} 
-                  messages={messages[selectedContact.id] || []} 
-                  isVisible={true}
-                  onToggle={() => {}}
-                />
-              ) : (
-                <QuickReplies 
-                  onSelectReply={handleQuickReplySelect}
-                  isVisible={true}
-                  onToggle={() => {}}
-                />
-              )}
-            </div>
-          )}
-          
-          {/* Profile Section */}
-          <div className="border-t border-gray-200">
+          {/* Profile Section - Takes remaining space */}
+          <div className="flex-1 overflow-y-auto">
             <ProfileSidebar contact={selectedContact} />
           </div>
         </div>
