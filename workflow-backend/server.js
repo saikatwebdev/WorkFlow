@@ -17,30 +17,6 @@ app.use(cors({
 }));
 app.use(express.json());
 
-//Admin middleware
-const adminMiddleware = async (req, res, next) => {
-  try {
-    // First check if user is authenticated
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    
-    if (!token) {
-      throw new Error();
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
-    const user = await User.findById(decoded.userId).select('-password');
-    
-    if (!user || user.role !== 'admin') {
-      throw new Error();
-    }
-
-    req.user = user;
-    next();
-  } catch (error) {
-    res.status(403).json({ message: 'Access denied. Admin privileges required.' });
-  }
-};
-
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/workflow-auth', {
   useNewUrlParser: true,
@@ -72,6 +48,10 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     default: ''
+  },
+  onboardingCompleted: {
+    type: Boolean,
+    default: false
   },
   createdAt: {
     type: Date,
@@ -107,6 +87,79 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
 
 const User = mongoose.model('User', userSchema);
 
+// Onboarding Schema
+const onboardingSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    unique: true
+  },
+  businessName: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  userName: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  businessDescription: {
+    type: String,
+    required: true
+  },
+  idealCustomer: {
+    type: String,
+    required: true
+  },
+  leadSources: [{
+    type: String,
+    required: true
+  }],
+  leadSourcesOther: {
+    type: String,
+    default: ''
+  },
+  dealSize: {
+    type: String,
+    required: true
+  },
+  communicationPlatforms: [{
+    type: String,
+    required: true
+  }],
+  communicationOther: {
+    type: String,
+    default: ''
+  },
+  leadHandling: {
+    type: String,
+    required: true
+  },
+  salesGoal: {
+    type: String,
+    required: true
+  },
+  customerQuestions: [{
+    type: String
+  }],
+  websiteLinks: {
+    type: String,
+    default: ''
+  },
+  urgency: {
+    type: String,
+    required: true
+  },
+  completedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const Onboarding = mongoose.model('Onboarding', onboardingSchema);
+
 // Generate JWT token
 const generateToken = (userId) => {
   return jwt.sign(
@@ -114,6 +167,53 @@ const generateToken = (userId) => {
     process.env.JWT_SECRET || 'your-secret-key',
     { expiresIn: '7d' }
   );
+};
+
+// Verify token middleware
+const authMiddleware = async (req, res, next) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    
+    if (!token) {
+      throw new Error();
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const user = await User.findById(decoded.userId).select('-password');
+    
+    if (!user) {
+      throw new Error();
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    res.status(401).json({ message: 'Please authenticate' });
+  }
+};
+
+// Admin middleware
+const adminMiddleware = async (req, res, next) => {
+  try {
+    // First check if user is authenticated
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    
+    if (!token) {
+      throw new Error();
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const user = await User.findById(decoded.userId).select('-password');
+    
+    if (!user || user.role !== 'admin') {
+      throw new Error();
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    res.status(403).json({ message: 'Access denied. Admin privileges required.' });
+  }
 };
 
 // Validation middleware
@@ -147,7 +247,7 @@ app.get('/', (req, res) => {
   res.json({ message: 'Auth server is running!' });
 });
 
-// Routes
+// AUTH ROUTES
 
 // Sign Up Route
 app.post('/api/auth/signup', validateAuthInput, async (req, res) => {
@@ -176,7 +276,8 @@ app.post('/api/auth/signup', validateAuthInput, async (req, res) => {
       user: {
         id: user._id,
         email: user.email,
-        role: user.role
+        role: user.role,
+        onboardingCompleted: user.onboardingCompleted
       }
     });
   } catch (error) {
@@ -218,7 +319,8 @@ app.post('/api/auth/signin', validateAuthInput, async (req, res) => {
       user: {
         id: user._id,
         email: user.email,
-        role: user.role
+        role: user.role,
+        onboardingCompleted: user.onboardingCompleted
       }
     });
   } catch (error) {
@@ -230,54 +332,133 @@ app.post('/api/auth/signin', validateAuthInput, async (req, res) => {
   }
 });
 
-// Verify token middleware
-const authMiddleware = async (req, res, next) => {
-  try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    
-    if (!token) {
-      throw new Error();
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
-    const user = await User.findById(decoded.userId).select('-password');
-    
-    if (!user) {
-      throw new Error();
-    }
-
-    req.user = user;
-    next();
-  } catch (error) {
-    res.status(401).json({ message: 'Please authenticate' });
-  }
-};
-
 // Get current user route (protected)
 app.get('/api/auth/me', authMiddleware, async (req, res) => {
   res.json({
     success: true,
     user: {
       id: req.user._id,
-      email: req.user.email
+      email: req.user.email,
+      role: req.user.role,
+      onboardingCompleted: req.user.onboardingCompleted
     }
   });
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    success: false,
-    message: 'Something went wrong!'
-  });
+// ONBOARDING ROUTES
+
+// Submit Onboarding Data
+app.post('/api/onboarding', authMiddleware, async (req, res) => {
+  try {
+    const { userId, ...onboardingData } = req.body;
+
+    // Verify that the authenticated user matches the userId
+    if (req.user._id.toString() !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied. You can only submit your own onboarding data.'
+      });
+    }
+
+    // Check if user has already completed onboarding
+    const existingOnboarding = await Onboarding.findOne({ userId });
+    if (existingOnboarding) {
+      return res.status(400).json({
+        success: false,
+        message: 'Onboarding has already been completed for this user.'
+      });
+    }
+
+    // Validate required fields
+    const requiredFields = [
+      'businessName', 'userName', 'businessDescription', 'idealCustomer',
+      'leadSources', 'dealSize', 'communicationPlatforms', 'leadHandling',
+      'salesGoal', 'urgency'
+    ];
+
+    const missingFields = requiredFields.filter(field => {
+      const value = onboardingData[field];
+      if (Array.isArray(value)) {
+        return value.length === 0;
+      }
+      return !value || (typeof value === 'string' && value.trim() === '');
+    });
+
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Missing required fields: ${missingFields.join(', ')}`
+      });
+    }
+
+    // Create onboarding record
+    const onboarding = new Onboarding({
+      userId,
+      ...onboardingData
+    });
+
+    await onboarding.save();
+
+    // Update user's onboarding status
+    await User.findByIdAndUpdate(userId, { 
+      onboardingCompleted: true,
+      name: onboardingData.userName // Update user's name from onboarding
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Onboarding completed successfully',
+      onboarding: {
+        id: onboarding._id,
+        completedAt: onboarding.completedAt
+      }
+    });
+
+  } catch (error) {
+    console.error('Onboarding error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error. Please try again later.',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Get onboarding data (protected route)
+app.get('/api/onboarding/:userId', authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.params;
 
+    // Verify that the authenticated user matches the userId or is admin
+    if (req.user._id.toString() !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied.'
+      });
+    }
+
+    const onboarding = await Onboarding.findOne({ userId }).populate('userId', 'email name');
+
+    if (!onboarding) {
+      return res.status(404).json({
+        success: false,
+        message: 'Onboarding data not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      onboarding
+    });
+
+  } catch (error) {
+    console.error('Get onboarding error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error. Please try again later.'
+    });
+  }
+});
 
 // ADMIN ROUTES
 
@@ -322,12 +503,18 @@ app.get('/api/admin/stats', adminMiddleware, async (req, res) => {
     const totalUsers = await User.countDocuments();
     const totalAdmins = await User.countDocuments({ role: 'admin' });
     const activeUsers = await User.countDocuments({ isActive: true });
+    const completedOnboarding = await User.countDocuments({ onboardingCompleted: true });
     
     // Get users registered in last 7 days
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     const recentUsers = await User.countDocuments({
       createdAt: { $gte: sevenDaysAgo }
+    });
+
+    // Get recent onboarding completions
+    const recentOnboarding = await Onboarding.countDocuments({
+      completedAt: { $gte: sevenDaysAgo }
     });
 
     // Get recent user list
@@ -342,12 +529,56 @@ app.get('/api/admin/stats', adminMiddleware, async (req, res) => {
         totalUsers,
         totalAdmins,
         activeUsers,
-        recentUsers
+        recentUsers,
+        completedOnboarding,
+        recentOnboarding
       },
       recentUsersList
     });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching stats', error: error.message });
+  }
+});
+
+// Get all onboarding data (admin only)
+app.get('/api/admin/onboarding', adminMiddleware, async (req, res) => {
+  try {
+    const { page = 1, limit = 10, search = '' } = req.query;
+    
+    let query = {};
+    if (search) {
+      // Find users matching search criteria first
+      const users = await User.find({
+        $or: [
+          { email: { $regex: search, $options: 'i' } },
+          { name: { $regex: search, $options: 'i' } }
+        ]
+      }).select('_id');
+      
+      const userIds = users.map(user => user._id);
+      query = { userId: { $in: userIds } };
+    }
+
+    const totalOnboarding = await Onboarding.countDocuments(query);
+    const onboardingData = await Onboarding.find(query)
+      .populate('userId', 'email name createdAt')
+      .sort({ completedAt: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
+
+    res.json({
+      success: true,
+      onboardingData,
+      totalOnboarding,
+      totalPages: Math.ceil(totalOnboarding / limit),
+      currentPage: page
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error fetching onboarding data', 
+      error: error.message 
+    });
   }
 });
 
@@ -404,6 +635,9 @@ app.delete('/api/admin/users/:userId', adminMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    // Also delete associated onboarding data
+    await Onboarding.findOneAndDelete({ userId });
+
     res.json({
       success: true,
       message: 'User deleted successfully'
@@ -413,7 +647,7 @@ app.delete('/api/admin/users/:userId', adminMiddleware, async (req, res) => {
   }
 });
 
-// Create new admin user (admin only)
+// Create new user (admin only)
 app.post('/api/admin/users', adminMiddleware, async (req, res) => {
   try {
     const { email, password, name, role = 'user' } = req.body;
@@ -493,4 +727,16 @@ app.post('/api/admin/users/:userId/reset-password', adminMiddleware, async (req,
   }
 });
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: 'Something went wrong!'
+  });
+});
 
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

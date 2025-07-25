@@ -8,6 +8,8 @@ import FilterSection from './FilterSection';
 import SalesTable from './SalesTable';
 import ExportProgress from './ExportProgress';
 import { salesData as initialSalesData } from '../../data/salesData';
+// import SalesReportWithNotifications from './DailyNotifications';
+
 
 const SalesReport = () => {
   // State management
@@ -182,6 +184,12 @@ const SalesReport = () => {
           summaryStats={summaryStats}
         />
 
+        {/* < SalesReportWithNotifications
+          summaryStats={summaryStats}
+          onNotificationChange={(settings) => {
+           // Handle notification settings change
+            console.log('Settings updated:', settings);
+          }}/> */}
         {/* Filters and Search */}
         <FilterSection
           filters={filters}

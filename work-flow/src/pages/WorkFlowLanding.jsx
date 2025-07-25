@@ -39,63 +39,74 @@ const WorkFlowLanding = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async () => {
-    if (!validateForm()) return;
-    
-    setIsLoading(true);
-    
-    try {
-      const endpoint = isLogin ? '/api/auth/signin' : '/api/auth/signup';
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+ const handleSubmit = async () => {
+  if (!validateForm()) return;
+  
+  setIsLoading(true);
+  
+  try {
+    const endpoint = isLogin ? '/api/auth/signin' : '/api/auth/signup';
+    const response = await fetch(`http://localhost:5000${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (data.success) {
-        // Store token and user info
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify({
-          id: data.user.id,
-          email: data.user.email,
-          role: data.user.role || 'user' // Default to 'user' if role not provided
-        }));
+    if (data.success) {
+      // Store token and user info
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify({
+        id: data.user.id,
+        email: data.user.email,
+        role: data.user.role || 'user',
+        onboardingCompleted: data.user.onboardingCompleted || false
+      }));
 
-        toast.success(data.message || (isLogin ? 'Signed in successfully!' : 'Account created successfully!'));
-        setShowModal(false);
-        
-        // Navigate based on user role
-        const userRole = data.user.role || 'user';
-        if (userRole === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/dashboard');
-        }
-        
-        // Reset form
-        setEmail('');
-        setPassword('');
-        setErrors({});
-      } else {
-        // Handle validation errors from server
-        if (data.errors) {
-          setErrors(data.errors);
-        } else {
-          toast.error(data.message || 'Authentication failed');
-        }
+      // Store whether this is a new signup for onboarding flow
+      if (!isLogin) {
+        localStorage.setItem('isNewSignup', 'true');
       }
-    } catch (error) {
-      console.error('Authentication error:', error);
-      toast.error('Network error. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
+      toast.success(data.message || (isLogin ? 'Signed in successfully!' : 'Account created successfully!'));
+      setShowModal(false);
+      
+      // Navigation logic
+      const userRole = data.user.role || 'user';
+      
+      if (userRole === 'admin') {
+        // Admins always go to admin panel
+        navigate('/admin');
+      } else if (!isLogin) {
+        // New signups go to onboarding
+        navigate('/onboarding');
+      } else {
+        // Existing users logging in go to dashboard
+        navigate('/dashboard');
+      }
+      
+      // Reset form
+      setEmail('');
+      setPassword('');
+      setErrors({});
+    } else {
+      // Handle validation errors from server
+      if (data.errors) {
+        setErrors(data.errors);
+      } else {
+        toast.error(data.message || 'Authentication failed');
+      }
+    }
+  } catch (error) {
+    console.error('Authentication error:', error);
+    toast.error('Network error. Please try again.');
+  } finally {
+    setIsLoading(false);
+  }
+};
   //end of Sign in and Log in Modal and form validation
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
