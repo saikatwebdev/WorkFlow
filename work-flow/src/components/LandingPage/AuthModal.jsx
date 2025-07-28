@@ -105,24 +105,24 @@ if (data.user.role === 'admin') {
   if (!showModal) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-indigo-900/20 backdrop-blur-lg z-50 animate-fadeIn">
-      <div className="relative bg-gradient-to-br from-white/95 to-gray-50/95 backdrop-blur-xl p-8 rounded-2xl w-full max-w-md shadow-2xl border border-white/20 animate-slideUp">
+    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-black/80 via-gray-900/80 to-black/80 backdrop-blur-lg z-50 animate-fadeIn">
+      <div className="relative bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-xl p-8 rounded-2xl w-full max-w-md shadow-2xl border border-gray-700/50 animate-slideUp">
         {/* Animated background elements */}
-        <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full blur-xl opacity-20 animate-pulse delay-1000"></div>
+        <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full blur-xl opacity-20 animate-pulse"></div>
+        <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-full blur-xl opacity-20 animate-pulse delay-1000"></div>
         
         <div className="relative z-10">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2 animate-slideDown">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-2 animate-slideDown">
               {isLogin ? 'Welcome Back' : 'Join Workflow'}
             </h2>
-            <p className="text-gray-600 text-sm animate-slideDown delay-100">
+            <p className="text-gray-300 text-sm animate-slideDown delay-100">
               {isLogin ? 'Sign in to your account' : 'Create your account'}
             </p>
           </div>
 
           {errors.general && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm animate-slideDown">
+            <div className="mb-4 p-3 bg-red-900/50 border border-red-700/50 rounded-xl text-red-300 text-sm animate-slideDown">
               {errors.general}
             </div>
           )}
@@ -138,14 +138,14 @@ if (data.user.role === 'admin') {
                   setErrors({ ...errors, email: '' });
                 }}
                 onKeyPress={handleKeyPress}
-                className="block w-full bg-white/80 backdrop-blur-sm border border-gray-200 p-3 rounded-xl 
-                         placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 
-                         focus:border-transparent transition-all duration-300 hover:bg-white/90
+                className="block w-full bg-gray-800/80 backdrop-blur-sm border border-gray-600/50 p-3 rounded-xl 
+                         placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 
+                         focus:border-transparent transition-all duration-300 hover:bg-gray-800/90
                          focus:scale-[1.02] transform"
                 disabled={loading}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1 animate-slideDown">{errors.email}</p>
+                <p className="text-red-400 text-sm mt-1 animate-slideDown">{errors.email}</p>
               )}
             </div>
 
@@ -159,14 +159,14 @@ if (data.user.role === 'admin') {
                   setErrors({ ...errors, password: '' });
                 }}
                 onKeyPress={handleKeyPress}
-                className="block w-full bg-white/80 backdrop-blur-sm border border-gray-200 p-3 rounded-xl 
-                         placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 
-                         focus:border-transparent transition-all duration-300 hover:bg-white/90
+                className="block w-full bg-gray-800/80 backdrop-blur-sm border border-gray-600/50 p-3 rounded-xl 
+                         placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 
+                         focus:border-transparent transition-all duration-300 hover:bg-gray-800/90
                          focus:scale-[1.02] transform"
                 disabled={loading}
               />
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1 animate-slideDown">{errors.password}</p>
+                <p className="text-red-400 text-sm mt-1 animate-slideDown">{errors.password}</p>
               )}
             </div>
 
@@ -202,7 +202,7 @@ if (data.user.role === 'admin') {
                   setErrors({});
                 }}
                 disabled={loading}
-                className="text-sm text-gray-600 hover:text-purple-600 transition-colors duration-300 
+                className="text-sm text-gray-300 hover:text-purple-400 transition-colors duration-300 
                          hover:underline underline-offset-4 disabled:opacity-50"
               >
                 {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
@@ -217,8 +217,8 @@ if (data.user.role === 'admin') {
                 setErrors({});
               }}
               disabled={loading}
-              className="w-full text-gray-500 hover:text-gray-700 transition-all duration-300 
-                       py-2 rounded-xl hover:bg-gray-100/50 animate-slideUp delay-600
+              className="w-full text-gray-400 hover:text-gray-200 transition-all duration-300 
+                       py-2 rounded-xl hover:bg-gray-800/50 animate-slideUp delay-600
                        disabled:opacity-50"
             >
               Cancel

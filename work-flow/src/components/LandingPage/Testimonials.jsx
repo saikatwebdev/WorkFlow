@@ -68,23 +68,23 @@ const Testimonials = () => {
   const currentTestimonial = testimonials[currentIndex];
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left side - Header */}
           <div className="space-y-6">
             <div className="inline-block">
-              <span className="px-4 py-2 bg-blue-100  rounded-full text-sm font-medium">
+              <span className="px-4 py-2 bg-blue-900/50 text-blue-300 rounded-full text-sm font-medium border border-blue-800/50">
                 Customer Stories
               </span>
             </div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
               What Our
-              <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 Customers Say
               </span>
             </h2>
-            <p className="text-xl text-gray-600 leading-relaxed">
+            <p className="text-xl text-gray-300 leading-relaxed">
               Join thousands of satisfied customers who've transformed their
               social media strategy with our powerful automation tools.
             </p>
@@ -96,8 +96,8 @@ const Testimonials = () => {
                   key={index}
                   className={`h-2 rounded-full transition-all duration-500 ${
                     index === currentIndex
-                      ? 'w-8 bg-blue-600'
-                      : 'w-2 bg-gray-300'
+                      ? 'w-8 bg-blue-500'
+                      : 'w-2 bg-gray-600'
                   }`}
                 />
               ))}
@@ -114,12 +114,12 @@ const Testimonials = () => {
                     : 'transform translate-y-0 opacity-100'
                 }`}
               >
-                <div className="bg-white rounded-2xl p-8 shadow-2xl border border-gray-100 h-full flex flex-col justify-between relative overflow-hidden">
+                <div className="bg-gray-900 rounded-2xl p-8 shadow-2xl border border-gray-800 h-full flex flex-col justify-between relative overflow-hidden">
                   {/* Background decoration */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full -translate-y-16 translate-x-16"></div>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-full -translate-y-16 translate-x-16"></div>
                   
                   {/* Quote icon */}
-                  <div className="absolute top-6 left-6 text-6xl text-blue-200 font-serif leading-none">
+                  <div className="absolute top-6 left-6 text-6xl text-blue-400/30 font-serif leading-none">
                     "
                   </div>
                   
@@ -135,7 +135,7 @@ const Testimonials = () => {
                     </div>
 
                     {/* Content */}
-                    <p className="text-gray-700 text-lg leading-relaxed mb-8 font-medium">
+                    <p className="text-gray-300 text-lg leading-relaxed mb-8 font-medium">
                       {currentTestimonial.content}
                     </p>
                   </div>
@@ -146,13 +146,13 @@ const Testimonials = () => {
                       {currentTestimonial.avatar}
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900 text-lg">
+                      <h4 className="font-bold text-white text-lg">
                         {currentTestimonial.name}
                       </h4>
-                      <p className="text-gray-600 text-sm">
+                      <p className="text-gray-400 text-sm">
                         {currentTestimonial.role}
                       </p>
-                      <p className="text-blue-600 text-sm font-medium">
+                      <p className="text-blue-400 text-sm font-medium">
                         {currentTestimonial.company}
                       </p>
                     </div>
@@ -162,8 +162,8 @@ const Testimonials = () => {
             </div>
 
             {/* Floating elements for visual interest */}
-            <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full opacity-20 animate-pulse"></div>
-            <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full opacity-20 animate-pulse delay-1000"></div>
+            <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full opacity-20 animate-pulse"></div>
+            <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-full opacity-20 animate-pulse delay-1000"></div>
           </div>
         </div>
       </div>

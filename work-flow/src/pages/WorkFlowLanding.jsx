@@ -113,7 +113,7 @@ const WorkFlowLanding = () => {
   const [selectedPlan, setSelectedPlan] = useState("pro");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
       <Navbar
         onOpenModal={() => setShowModal(true)}
@@ -139,7 +139,7 @@ const WorkFlowLanding = () => {
       <RevealOnScroll>
         <HeroSection />
       </RevealOnScroll>
-      <div className="w-full bg-white ">
+      <div className="w-full bg-black">
         <TextHoverEffect text="WorkFlow" duration={0.5} />
       </div>
       <RevealOnScroll delay={0.1}>

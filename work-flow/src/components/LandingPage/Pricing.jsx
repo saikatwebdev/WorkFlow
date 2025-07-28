@@ -56,17 +56,17 @@ const Pricing = () => {
   const [billingCycle, setBillingCycle] = useState("Monthly");
 
   return (
-    <section id="pricing" className="py-10 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+    <section id="pricing" className="py-10 bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-600/20 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-8">
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-8">
             Choose Your Plan
           </h2>
           
@@ -102,8 +102,8 @@ const Pricing = () => {
           {pricingPlans.map((plan, index) => (
             <div
               key={index}
-              className={`bg-white rounded-2xl p-4 relative overflow-hidden shadow-lg h-full flex flex-col ${
-                plan.popular ? "ring-2 ring-blue-500" : ""
+              className={`bg-gray-900 rounded-2xl p-4 relative overflow-hidden shadow-lg h-full flex flex-col border ${
+                plan.popular ? "ring-2 ring-blue-500 border-blue-500/50" : "border-gray-800"
               }`}
             >
               {/* Limited time badge */}
@@ -123,23 +123,23 @@ const Pricing = () => {
 
               {/* Plan header */}
               <div className="text-center mb-8 mt-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">
+                <h3 className="text-2xl font-bold text-white mb-6">
                   {plan.name}
                 </h3>
                 
                 <div className="mb-4">
-                  <div className="text-gray-500 line-through text-lg mb-1">
+                  <div className="text-gray-400 line-through text-lg mb-1">
                     {plan.originalPrice}
                   </div>
-                  <div className="text-5xl font-bold text-green-500 mb-2">
+                  <div className="text-5xl font-bold text-green-400 mb-2">
                     {plan.currentPrice}
-                    <span className="text-lg font-normal text-gray-600">
+                    <span className="text-lg font-normal text-gray-300">
                       {plan.period}
                     </span>
                   </div>
                 </div>
                 
-                <p className="text-gray-600">
+                <p className="text-gray-300">
                   {plan.description}
                 </p>
               </div>
@@ -148,8 +148,8 @@ const Pricing = () => {
               <ul className="space-y-4 mb-8 flex-grow">
                 {plan.features.map((feature, featureIndex) => (
                   <li key={featureIndex} className="flex items-center">
-                    <CheckCircle className="w-5 h-5 text-blue-500 mr-3 flex-shrink-0" />
-                    <span className="text-gray-700">{feature}</span>
+                    <CheckCircle className="w-5 h-5 text-blue-400 mr-3 flex-shrink-0" />
+                    <span className="text-gray-300">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -161,8 +161,8 @@ const Pricing = () => {
                     plan.popular
                       ? "bg-blue-500 text-white hover:bg-blue-600"
                       : plan.name === "Enterprise"
-                      ? "bg-gray-800 text-white hover:bg-gray-900"
-                      : "bg-gray-800 text-white hover:bg-gray-900"
+                      ? "bg-gray-700 text-white hover:bg-gray-600"
+                      : "bg-gray-700 text-white hover:bg-gray-600"
                   }`}
                 >
                   {plan.name === "Enterprise" ? "Contact Sales" : "Start Free Trial"}

@@ -63,7 +63,7 @@ const TextHoverEffect = ({ text, duration = 0.5 }) => {
         textAnchor="middle"
         dominantBaseline="middle"
         strokeWidth="0.3"
-        className="fill-transparent stroke-neutral-200 font-bold text-5xl dark:stroke-neutral-800"
+        className="fill-transparent stroke-gray-600 font-bold text-5xl"
         style={{ opacity: hovered ? 0.7 : 0 }}
       >
         {text}
@@ -75,7 +75,7 @@ const TextHoverEffect = ({ text, duration = 0.5 }) => {
         textAnchor="middle"
         dominantBaseline="middle"
         strokeWidth="0.3"
-        className="fill-transparent stroke-neutral-200 font-bold text-5xl dark:stroke-neutral-800"
+        className="fill-transparent stroke-gray-600 font-bold text-5xl"
         initial={{ strokeDashoffset: 1000, strokeDasharray: 1000 }}
         animate={{ strokeDashoffset: 0, strokeDasharray: 1000 }}
         transition={{ duration: 2, ease: 'easeInOut' }}
