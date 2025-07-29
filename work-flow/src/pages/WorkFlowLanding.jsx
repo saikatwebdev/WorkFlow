@@ -139,9 +139,6 @@ const WorkFlowLanding = () => {
       <RevealOnScroll>
         <HeroSection />
       </RevealOnScroll>
-      <div className="w-full bg-black">
-        <TextHoverEffect text="WorkFlow" duration={0.5} />
-      </div>
       <RevealOnScroll delay={0.1}>
         <Features />
       </RevealOnScroll>
@@ -152,7 +149,9 @@ const WorkFlowLanding = () => {
         <Pricing />
       </RevealOnScroll>
         <CTA />
-  
+      <div className="w-full bg-black">
+        <TextHoverEffect text="WorkFlow" duration={0.5} />
+      </div>
       <Footer />
     </div>
   );
