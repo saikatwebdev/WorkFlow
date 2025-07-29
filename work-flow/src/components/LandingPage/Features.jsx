@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Zap,
   Calendar,
@@ -10,78 +10,102 @@ import {
 
 const features = [
   {
-    icon: <Zap className="w-8 h-8 text-blue-400" />,
-    title: "Multi-Platform Integration",
-    description:
-      "Connect Instagram, WhatsApp, and Facebook in one unified dashboard. Manage all your social presence from a single interface.",
+    icon: <Zap className="w-14 h-14 text-blue-400" />,
+    title: "Lightning Fast Performance",
+    description: "Optimized algorithms ensure your campaigns execute in milliseconds.",
+    gradient: "from-blue-500 to-cyan-500",
   },
   {
-    icon: <Calendar className="w-8 h-8 text-green-400" />,
+    icon: <Calendar className="w-14 h-14 text-green-400" />,
     title: "Smart Scheduling",
-    description:
-      "AI-powered optimal posting times based on your audience engagement patterns. Never miss the perfect moment to connect.",
+    description: "AI-powered posting times based on audience engagement patterns.",
+    gradient: "from-green-500 to-emerald-500",
   },
   {
-    icon: <BarChart3 className="w-8 h-8 text-purple-400" />,
+    icon: <BarChart3 className="w-14 h-14 text-purple-400" />,
     title: "Campaign Automation",
-    description:
-      "Create intelligent workflows that respond to user interactions, automate responses, and nurture leads across all platforms.",
+    description: "Create intelligent workflows that respond to user interactions.",
+    gradient: "from-purple-500 to-violet-500",
   },
   {
-    icon: <TrendingUp className="w-8 h-8 text-orange-400" />,
+    icon: <TrendingUp className="w-14 h-14 text-orange-400" />,
     title: "Advanced Analytics",
-    description:
-      "Deep insights into your social media performance with AI-driven recommendations for growth and engagement optimization.",
+    description: "AI-driven recommendations for growth and engagement optimization.",
+    gradient: "from-orange-500 to-red-500",
   },
   {
-    icon: <Shield className="w-8 h-8 text-red-400" />,
-    title: "User-Friendly Setup",
-    description:
-      "Get started in minutes with our intuitive onboarding process. No technical expertise required to unleash powerful automation.",
+    icon: <Shield className="w-14 h-14 text-red-400" />,
+    title: "Enterprise Security",
+    description: "Bank-level encryption and compliance standards for your data.",
+    gradient: "from-red-500 to-pink-500",
   },
   {
-    icon: <Clock className="w-8 h-8 text-indigo-400" />,
+    icon: <Clock className="w-14 h-14 text-indigo-400" />,
     title: "24/7 Monitoring",
-    description:
-      "Continuous monitoring and automatic adjustments ensure your campaigns run smoothly around the clock.",
+    description: "Continuous monitoring ensures your campaigns run smoothly.",
+    gradient: "from-indigo-500 to-purple-500",
   },
 ];
 
-const Features = () => {
-  return (
-    <section
-      id="features"
-      className="py-20 bg-black"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Powerful Features for Modern Businesses
-          </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Everything you need to automate, optimize, and scale your social
-            media presence across all major platforms.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className="bg-gray-900 rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow group border border-gray-800"
-            >
-              <div className="mb-6 transition-transform">
-                {feature.icon}
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-4">
-                {feature.title}
-              </h3>
-              <p className="text-gray-300">{feature.description}</p>
-            </div>
-          ))}
+const FeatureCard = ({ feature }) => (
+  <div className="flex-shrink-0 w-full md:w-1/2 px-6">
+    <div className="bg-[#111] rounded-2xl p-10 h-full border border-gray-800 hover:border-gray-600 transition-all duration-500 group">
+      <div className="mb-6">
+        <div className="p-5 rounded-xl bg-gray-800 inline-block">
+          {feature.icon}
         </div>
       </div>
-    </section>
+      <h3 className="text-3xl font-bold text-white mb-4">{feature.title}</h3>
+      <p className="text-gray-300 text-lg">{feature.description}</p>
+    </div>
+  </div>
+);
+
+const Features = () => {
+  const containerRef = useRef(null);
+  const scrollTrackRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current || !scrollTrackRef.current) return;
+
+      const container = containerRef.current;
+      const scrollTrack = scrollTrackRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const scrollY = window.scrollY;
+      const startY = container.offsetTop;
+      const endY = startY + container.offsetHeight - window.innerHeight;
+
+      if (scrollY >= startY && scrollY <= endY) {
+        const progress = (scrollY - startY) / (endY - startY);
+        const maxTranslate = scrollTrack.scrollWidth - scrollTrack.clientWidth;
+        scrollTrack.style.transform = `translateX(-${progress * maxTranslate}px)`;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <div ref={containerRef} className="relative" style={{ height: "400vh" }}>
+      <div className="sticky top-0 h-screen flex items-center justify-center bg-black overflow-hidden">
+        <div className="max-w-7xl px-8 w-full">
+          <h2 className="text-5xl font-bold text-center text-white mb-12">
+            Our Powerful Features
+          </h2>
+          <div
+            ref={scrollTrackRef}
+            className="flex transition-transform duration-200 ease-out"
+            style={{ willChange: "transform" }}
+          >
+            {features.map((feature, index) => (
+              <FeatureCard key={index} feature={feature} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
