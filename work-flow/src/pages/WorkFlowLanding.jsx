@@ -137,7 +137,7 @@ const WorkFlowLanding = () => {
         isLoading={isLoading}
       />
       <RevealOnScroll>
-        <HeroSection />
+        <HeroSection onOpenModal={() => setShowModal(true)} />
       </RevealOnScroll>
         <Features />
       <RevealOnScroll delay={0.2}>
@@ -149,7 +149,6 @@ const WorkFlowLanding = () => {
       <RevealOnScroll>
         <CTA />
       </RevealOnScroll>
-        
       <div className="w-full bg-black">
         <TextHoverEffect text="WorkFlow" duration={0.5} />
       </div>
