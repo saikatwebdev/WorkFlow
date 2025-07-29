@@ -42,7 +42,7 @@ const CTA = () => {
         <div className="inline-block">
           <button
             onClick={handleGetStarted}
-            className="group relative inline-flex items-center justify-center px-10 py-4 text-lg font-semibold text-white bg-blue-600 border border-blue-500 rounded-lg hover:bg-blue-700 hover:border-blue-400 transform hover:scale-105 transition-all duration-200"
+            className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors flex items-center space-x-2 group"
           >            
             <span className="relative flex items-center space-x-3">
               <span>Get Free Access</span>
@@ -69,9 +69,6 @@ const CTA = () => {
           </div>
         </div>
       </div>
-      
-      {/* Bottom border */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gray-800"></div>
     </section>
   );
 };
