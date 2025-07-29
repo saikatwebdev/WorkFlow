@@ -1,12 +1,21 @@
 "use client";
-import React, { useRef, useEffect, useState } from 'react';
-import { motion } from 'motion/react';
+import React, { useRef, useEffect, useState } from "react";
+import { motion } from "framer-motion"; // fixed: use framer-motion
+import { useInView } from "react-intersection-observer";
 
-const TextHoverEffect = ({ text, duration = 0.5 }) => {
+const TextHoverEffect = ({ text, duration = 1.5 }) => {
   const svgRef = useRef(null);
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
   const [hovered, setHovered] = useState(false);
-  const [maskPos, setMaskPos] = useState({ cx: '50%', cy: '50%' });
+  const [maskPos, setMaskPos] = useState({ cx: "50%", cy: "50%" });
+
+  const { ref: inViewRef, inView } = useInView({ triggerOnce: true });
+
+  // Combine refs
+  const setRefs = (node) => {
+    svgRef.current = node;
+    inViewRef(node);
+  };
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -18,9 +27,9 @@ const TextHoverEffect = ({ text, duration = 0.5 }) => {
 
   return (
     <svg
-      ref={svgRef}
+      ref={setRefs}
       width="100%"
-      height="400px"
+      height="300px"
       viewBox="0 0 600 100"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -46,7 +55,7 @@ const TextHoverEffect = ({ text, duration = 0.5 }) => {
           r="20%"
           initial={maskPos}
           animate={maskPos}
-          transition={{ duration, ease: 'easeOut' }}
+          transition={{ duration, ease: "easeOut" }}
         >
           <stop offset="0%" stopColor="white" />
           <stop offset="100%" stopColor="black" />
@@ -57,6 +66,7 @@ const TextHoverEffect = ({ text, duration = 0.5 }) => {
         </mask>
       </defs>
 
+      {/** Shadow text when hovered */}
       <text
         x="50%"
         y="50%"
@@ -69,32 +79,38 @@ const TextHoverEffect = ({ text, duration = 0.5 }) => {
         {text}
       </text>
 
-      <motion.text
-        x="50%"
-        y="50%"
-        textAnchor="middle"
-        dominantBaseline="middle"
-        strokeWidth="0.3"
-        className="fill-transparent stroke-gray-600 font-bold text-5xl"
-        initial={{ strokeDashoffset: 1000, strokeDasharray: 1000 }}
-        animate={{ strokeDashoffset: 0, strokeDasharray: 1000 }}
-        transition={{ duration: 2, ease: 'easeInOut' }}
-      >
-        {text}
-      </motion.text>
+      {/** Main stroke animation, only when in view */}
+      {inView && (
+        <motion.text
+          x="50%"
+          y="50%"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          strokeWidth="0.3"
+          className="fill-transparent stroke-gray-600 font-bold text-5xl"
+          initial={{ strokeDashoffset: 1000, strokeDasharray: 1000 }}
+          animate={{ strokeDashoffset: 0, strokeDasharray: 1000 }}
+          transition={{ duration: 2, ease: "easeInOut" }}
+        >
+          {text}
+        </motion.text>
+      )}
 
-      <text
-        x="50%"
-        y="50%"
-        textAnchor="middle"
-        dominantBaseline="middle"
-        stroke="url(#textGradient)"
-        strokeWidth="0.3"
-        mask="url(#textMask)"
-        className="fill-transparent font-bold text-5xl"
-      >
-        {text}
-      </text>
+      {/** Colored text masked by radial gradient */}
+      {inView && (
+        <text
+          x="50%"
+          y="50%"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          stroke="url(#textGradient)"
+          strokeWidth="0.3"
+          mask="url(#textMask)"
+          className="fill-transparent font-bold text-5xl"
+        >
+          {text}
+        </text>
+      )}
     </svg>
   );
 };
