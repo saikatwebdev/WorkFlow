@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Search, Filter, MoreVertical, Edit, Trash2, Play, Pause, Eye } from 'lucide-react';
+import { Plus, Search, Filter, MoreVertical, Edit, Trash2, Play, Pause, Eye, Instagram } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CreateCampaignModal from './CreateCampaignModal';
 
@@ -77,13 +77,10 @@ const CampaignsList = () => {
 
   const getChannelIcon = (channel) => {
     const icons = {
-      whatsapp: '💬',
-      instagram: '📷',
-      linkedin: '💼',
-      twitter: '🐦',
-      telegram: '✈️',
-      email: '📧',
-      sms: '📱'
+      whatsapp: WhatsApp,
+      instagram: Instagram,
+      
+      
     };
     return icons[channel] || '📱';
   };
