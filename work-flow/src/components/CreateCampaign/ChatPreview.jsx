@@ -9,13 +9,13 @@ const ChatPreview = ({ campaignData, currentStep }) => {
   const getProductName = () => {
     const brief = campaignData?.brief?.description || '';
     const match = brief.match(/for\s+(\w+)/i);
-    return match ? match[1] : 'GoalMate';
+    return match ? match[1] : 'WorkFlow';
   };
 
   const getPreviewMessage = () => {
     let message = campaignData?.message?.initialMessage || '';
     if (!message) {
-      message = `Hey {{name}}, this is ${getPersonaName()} from Team ${getProductName()}! We're excited to help you achieve your ambitions. What's your #1 goal this month?`;
+      message = `Hey {{name}}, this is ${getPersonaName()} from Team ${getProductName()}! We're excited to help you achieve your ambitions. What's your first choice?`;
     }
     
     // Replace variables with preview values

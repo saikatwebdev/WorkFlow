@@ -63,7 +63,7 @@ const CampaignBrief = ({ data, onChange, validation }) => {
           id="campaign-description"
           value={data.description}
           onChange={handleDescriptionChange}
-          placeholder="Launching an online campaign for GoalMate can position your product as the ultimate tool for productivity and goal-setting, especially among college students, creatives, and startup enthusiasts. Start by clearly defining the campaign's purpose: 'to create awareness and sell GoalMate to 100+ users within the first month by leveraging Instagram and WhatsApp.'"
+          placeholder="Launching an online campaign for WorkFlow can position your product as the ultimate tool for productivity and goal-setting, especially among college students, creatives, and startup enthusiasts. Start by clearly defining the campaign's purpose: 'to create awareness and sell WorkFlow to 100+ users within the first month by leveraging Instagram and WhatsApp.'"
           className={`w-full h-32 px-4 py-3 border rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
             validation === false ? 'border-red-300 bg-red-50' : 'border-gray-300'
           }`}

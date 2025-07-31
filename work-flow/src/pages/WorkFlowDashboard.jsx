@@ -20,7 +20,7 @@ import AIFineTuning from '../components/DashboardSections/AIFineTuning/AIFineTun
 import Integration from '../components/DashboardSections/Integration/Integration';
 import SalesReport from '../components/DashboardSections/SalesReport/SalesReport';
 import Navbar from '../components/Navbar/Navbar';
-import Chats from '../components/DashboardSections/Chats/Chats'
+import Chats from '../components/DashboardSections/Chats/Chats';
 import SignOutModal from '../components/SignOutModal';
 import CampaignsDemo from '../components/CreateCampaign/CampaignsDemo';
 const WorkFlowDashboard = () => {

@@ -105,7 +105,7 @@ if (data.user.role === 'admin') {
   if (!showModal) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-black/80 via-gray-900/80 to-black/80 backdrop-blur-lg z-50 animate-fadeIn">
+    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-black/80 via-gray-900/80 to-black/80 backdrop-blur-lg z-101 animate-fadeIn">
       <div className="relative bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-xl p-8 rounded-2xl w-full max-w-md shadow-2xl border border-gray-700/50 animate-slideUp">
         {/* Animated background elements */}
         <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full blur-xl opacity-20 animate-pulse"></div>

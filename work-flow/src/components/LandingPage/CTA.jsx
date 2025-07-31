@@ -1,18 +1,16 @@
 import React from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
+import BackgroundHover from "../animations/BackgroundHover";
 
 const CTA = () => {
   const handleGetStarted = () => {
     // Replace with your actual Microsoft Form URL
-    window.open('https://forms.microsoft.com/your-form-link', '_blank');
+    window.open('https://forms.microsoft.com/r/xUBW5iGDJB', '_blank');
   };
 
   return (
-    <section className="relative py-32 bg-black overflow-hidden">
-      {/* Subtle grid background */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:50px_50px]"></div>
-      </div>
+    <div className="relative py-35 z-100">
+      <BackgroundHover/>
       
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Icon Badge */}
@@ -22,15 +20,11 @@ const CTA = () => {
         
         {/* Main Heading */}
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight">
-          Our platform is{" "}
-          <span className="text-blue-400">
-            free
-          </span>{" "}
-          for the first{" "}
+          Join the <span className="text-blue-500">Top</span>{" "}
           <span className="text-white bg-gray-800 px-3 py-1 rounded-lg border border-gray-600">
             100
           </span>{" "}
-          registered businesses.
+          Businesses
         </h1>
         
         {/* Subtext */}
@@ -39,7 +33,7 @@ const CTA = () => {
         </p>
         
         {/* CTA Button */}
-        <div className="inline-block">
+        <div className="inline-block z-100">
           <button
             onClick={handleGetStarted}
             className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors flex items-center space-x-2 group"
@@ -69,7 +63,7 @@ const CTA = () => {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

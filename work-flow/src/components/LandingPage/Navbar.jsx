@@ -11,7 +11,7 @@ const Navbar = ({ onOpenModal, isMenuOpen, toggleMenu }) => {
   };
 
   return (
-    <nav className="mx-4 sm:mx-6 lg:mx-8 rounded-xl shadow-2xl shadow-white/20 bg-black backdrop-blur-md border border-white/20 sticky top-6 z-50 transition-all duration-300 hover:shadow-white/40 hover:shadow-2xl" style={{ maxWidth: 'calc(100% - 200px)', margin: '0 auto' }}>
+    <nav className="mx-4 sm:mx-6 lg:mx-8 rounded-xl shadow-2xl shadow-white/20 bg-black backdrop-blur-md border border-white/20 sticky top-6 z-101 transition-all duration-300 hover:shadow-white/40 hover:shadow-2xl" style={{ maxWidth: 'calc(100% - 200px)', margin: '0 auto' }}>
       {/* White glow effect background */}
       <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-white/10 via-white/20 to-white/10 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
       <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-white/20 via-white/30 to-white/20 opacity-50 blur-sm pointer-events-none"></div>

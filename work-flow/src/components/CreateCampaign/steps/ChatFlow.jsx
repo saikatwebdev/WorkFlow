@@ -84,7 +84,7 @@ const ChatFlow = ({ data, onChange, validation }) => {
           id="campaign-objective"
           value={data.objective}
           onChange={handleObjectiveChange}
-          placeholder="Create awareness and sell GoalMate to over 100 users within the first month by engaging them through personalized conversations."
+          placeholder="Create awareness and sell WorkFlow to over 100 users within the first month by engaging them through personalized conversations."
           rows={3}
           className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none ${
             isFieldInvalid('objective') ? 'border-red-300 bg-red-50' : 'border-gray-300'
